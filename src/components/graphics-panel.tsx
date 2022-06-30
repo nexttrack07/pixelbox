@@ -1,15 +1,25 @@
 import { SimpleGrid, Box, Image, Button } from "@chakra-ui/react";
 import svgs from 'data.json';
-import { useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { defaultStyle, elementsState, elementState } from "stores/element.store";
 
 export function GraphicsPanel() {
-  const [currentSvg, setCurrentSvg] = useState<string|null>(null)
+  const [elements, setElements] = useRecoilState(elementsState);
+  const setElementState = useSetRecoilState(elementState(elements.length));
 
-  function handleLoadSvg(url: string) {
+  function handleAddElement(url: string) {
+    const newId = elements.length;
+    setElements(elements => [...elements, newId]);
+
     fetch(url)
       .then(res => res.text())
-      .then(data => {
-        setCurrentSvg(data);
+      .then(html => {
+        setElementState({
+          type: 'svg',
+          style: defaultStyle,
+          html
+        })
+
       })
   }
 
@@ -17,7 +27,7 @@ export function GraphicsPanel() {
     <>
     <SimpleGrid columns={3} spacing={4}>
       {svgs.data.map(item => (
-        <Button variant='unstyled' onClick={() => handleLoadSvg(item.url)}>
+        <Button variant='unstyled' onClick={() => handleAddElement(item.url)}>
           <Image 
             src={item.url}
             id={item.id}
@@ -27,12 +37,6 @@ export function GraphicsPanel() {
          </Button>
       ))}
     </SimpleGrid>
-    <br />
-    {currentSvg && (
-      <Box 
-        dangerouslySetInnerHTML={{ __html: currentSvg }}
-      />
-    )}
     </>
   )
 }
