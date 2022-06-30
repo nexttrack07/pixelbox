@@ -1,4 +1,4 @@
-import { atom, atomFamily } from "recoil";
+import { atom, atomFamily, selector, selectorFamily } from "recoil";
 
 export const elementsState = atom<number[]>({
   key: 'elements',
@@ -45,4 +45,47 @@ export const elementState = atomFamily<ElementState, number>({
     style: defaultStyle,
     color: '#2345f4'
   })
+})
+
+/**
+ * An atom that stores which Element is currently selected.
+ */
+ export const selectedElementIdsState = atom<number[]>({
+  key: 'selectedElementId',
+  default: [],
+})
+
+/**
+* A selector that returns the selected Element's state.
+*/
+export const selectedElementState = selector<ElementState | undefined>({
+  key: 'selectedElement',
+  get: ({get}) => {
+      const ids = get(selectedElementIdsState)
+
+      if (ids.length === 1) {
+          return get(elementState(ids[0]))
+      }
+  },
+  set: ({set, get}, newElementValue) => {
+      const ids = get(selectedElementIdsState)
+
+      if (ids.length === 1 && newElementValue) {
+          set(elementState(ids[0]), newElementValue)
+      }
+  },
+})
+
+/**
+* A selectorFamily that returns true if the provided
+* Element is currently selected.
+*
+* https://recoiljs.org/docs/api-reference/utils/selectorFamily
+*/
+export const isSelectedState = selectorFamily({
+  key: 'isSelected',
+  get: (id: number) => ({get}) => {
+      const selectedElementIds = get(selectedElementIdsState)
+      return selectedElementIds.includes(id)
+  },
 })

@@ -27,7 +27,7 @@ export function GraphicsPanel() {
     <>
     <SimpleGrid columns={3} spacing={4}>
       {svgs.data.map(item => (
-        <Button variant='unstyled' onClick={() => handleAddElement(item.url)}>
+        <Button key={item.id} variant='unstyled' onClick={() => handleAddElement(item.url)}>
           <Image 
             src={item.url}
             id={item.id}

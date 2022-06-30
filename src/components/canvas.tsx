@@ -8,7 +8,7 @@ export function Canvas() {
 
   return (
     <Box position='relative' bg='white' h='550px' w='700px'>
-      {elements.map(element => <Element id={element} />)}
+      {elements.map(element => <Element key={element} id={element} />)}
     </Box>
   )
 }
