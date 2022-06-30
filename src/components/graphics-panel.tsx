@@ -16,7 +16,12 @@ export function GraphicsPanel() {
       .then(html => {
         setElementState({
           type: 'svg',
-          style: defaultStyle,
+          style: {
+            top: 100,
+            left: 100,
+            height: 100,
+            width: 100
+          },
           html
         })
 
@@ -27,7 +32,7 @@ export function GraphicsPanel() {
     <>
     <SimpleGrid columns={3} spacing={4}>
       {svgs.data.map(item => (
-        <Button key={item.id} variant='unstyled' onClick={() => handleAddElement(item.url)}>
+        <Button my={5} key={item.id} variant='unstyled' onClick={() => handleAddElement(item.url)}>
           <Image 
             src={item.url}
             id={item.id}

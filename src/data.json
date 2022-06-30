@@ -3,6 +3,34 @@
     {
       "id": "abacus",
       "url": "https://s2.svgbox.net/illlustrations.svg?ic=abacus"
+    },
+    {
+      "id": "burger",
+      "url": "https://s2.svgbox.net/illlustrations.svg?ic=burger"
+    },
+    {
+      "id": "building",
+      "url": "https://s2.svgbox.net/illlustrations.svg?ic=building"
+    },
+    {
+      "id": "cafe",
+      "url": "https://s2.svgbox.net/illlustrations.svg?ic=cafe"
+    },
+    {
+      "id": "camping",
+      "url": "https://s2.svgbox.net/illlustrations.svg?ic=camping"
+    },
+    {
+      "id": "calculator",
+      "url": "https://s2.svgbox.net/illlustrations.svg?ic=calculator"
+    },
+    {
+      "id": "coding",
+      "url": "https://s2.svgbox.net/illlustrations.svg?ic=coding"
+    },
+    {
+      "id": "covid-virus",
+      "url": "https://s2.svgbox.net/illlustrations.svg?ic=covid-virus"
     }
   ]
 }
