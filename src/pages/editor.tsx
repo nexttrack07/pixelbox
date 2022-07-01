@@ -1,5 +1,5 @@
 import { Grid, GridItem } from "@chakra-ui/react"
-import { Canvas, GraphicsPanel } from "components"
+import { Canvas, GraphicsPanel, Toolbar } from "components"
 
 export function Editor() {
 
@@ -21,7 +21,9 @@ export function Editor() {
       <GridItem p={4} borderRight='2px' borderColor='gray.400' bg='gray.200' area='sidepanel'>
         <GraphicsPanel /> 
       </GridItem>
-      <GridItem borderBottom='2px' borderColor='gray.400' bg='gray.200' area='toolbar' />
+      <GridItem borderBottom='2px' borderColor='gray.400' bg='gray.200' area='toolbar'>
+        <Toolbar />
+      </GridItem>
       <GridItem display='flex' alignItems='center' justifyContent='center' bg='gray.300' area='main'>
         <Canvas />
       </GridItem>

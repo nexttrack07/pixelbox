@@ -20,6 +20,7 @@
     "react-rnd": "^10.3.7",
     "react-router-dom": "^6.3.0",
     "recoil": "^0.7.4",
+    "tabler-icons-react": "^1.52.0",
     "vite-tsconfig-paths": "^3.5.0"
   },
   "devDependencies": {
