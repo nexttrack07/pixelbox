@@ -112,6 +112,7 @@ export function Editor() {
         borderColor="gray.400"
         bg="gray.200"
         area="sidepanel"
+        position="relative"
       >
         <Sidepanel />
       </GridItem>

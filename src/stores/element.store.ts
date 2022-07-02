@@ -35,8 +35,15 @@ type ImageState = {
   src: string;
 };
 
+export type TextState = {
+  type: "text";
+  content: string;
+  fontSize: number;
+  color: string;
+};
+
 export type ElementState = CommonState &
-  (RectangleState | ImageState | SvgState);
+  (RectangleState | ImageState | SvgState | TextState);
 
 export const defaultStyle = {
   top: 20,
