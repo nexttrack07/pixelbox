@@ -1,5 +1,5 @@
 import { SimpleGrid, Box, Image, Button } from "@chakra-ui/react";
-import svgs from 'data.json';
+import svgs from "data.json";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { defaultStyle, elementsState, elementState } from "stores/element.store";
 
@@ -9,39 +9,39 @@ export function GraphicsPanel() {
 
   function handleAddElement(url: string) {
     const newId = elements.length;
-    setElements(elements => [...elements, newId]);
+    setElements((elements) => [...elements, newId]);
 
     fetch(url)
-      .then(res => res.text())
-      .then(html => {
+      .then((res) => res.text())
+      .then((html) => {
         setElementState({
-          type: 'svg',
+          type: "svg",
           style: {
             top: 100,
             left: 100,
             height: 100,
-            width: 100
+            width: 100,
           },
-          html
-        })
-
-      })
+          html,
+          src: url,
+        });
+      });
   }
 
   return (
     <>
-    <SimpleGrid columns={3} spacing={4}>
-      {svgs.data.map(item => (
-        <Button my={5} key={item.id} variant='unstyled' onClick={() => handleAddElement(item.url)}>
-          <Image 
-            src={item.url}
-            id={item.id}
-            alt={item.id} 
-            boxSize='75px'
-          />
-         </Button>
-      ))}
-    </SimpleGrid>
+      <SimpleGrid columns={3} spacing={4}>
+        {svgs.data.map((item) => (
+          <Button
+            my={5}
+            key={item.id}
+            variant="unstyled"
+            onClick={() => handleAddElement(item.url)}
+          >
+            <Image src={item.url} id={item.id} alt={item.id} boxSize="75px" />
+          </Button>
+        ))}
+      </SimpleGrid>
     </>
-  )
+  );
 }

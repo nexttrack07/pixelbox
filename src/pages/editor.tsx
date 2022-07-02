@@ -43,20 +43,11 @@ export function Editor() {
         gap={4}
         p={4}
       >
-        <Image
-          boxSize="40px"
-          src="https://s2.svgbox.net/illlustrations.svg?ic=colortool"
-        />
+        <Image boxSize="40px" src="https://s2.svgbox.net/illlustrations.svg?ic=colortool" />
         <Menu>
           <MenuButton
             as={(props: ButtonProps) => (
-              <Button
-                {...props}
-                ml={8}
-                display="flex"
-                alignItems="center"
-                variant="unstyled"
-              />
+              <Button {...props} ml={8} display="flex" alignItems="center" variant="unstyled" />
             )}
             rightIcon={<ChevronDown />}
           >
@@ -75,22 +66,11 @@ export function Editor() {
         </Editable>
         <Divider orientation="vertical" />
         <Text>1200px x 900px</Text>
-        <Button
-          ml={4}
-          variant="outline"
-          borderColor="gray.500"
-          color="gray.600"
-          size="sm"
-        >
+        <Button ml={4} variant="outline" borderColor="gray.500" color="gray.600" size="sm">
           Resize
         </Button>
         <Divider orientation="vertical" />
-        <Button
-          variant="outline"
-          borderColor="gray.500"
-          color="gray.600"
-          size="sm"
-        >
+        <Button variant="outline" borderColor="gray.500" color="gray.600" size="sm">
           Duplicate
         </Button>
         <Box flex={1} />
@@ -98,12 +78,7 @@ export function Editor() {
           Upgrade now
         </Button>
       </GridItem>
-      <GridItem
-        borderRight="2px"
-        borderColor="gray.400"
-        bg="gray.300"
-        area="sidebar"
-      >
+      <GridItem borderRight="2px" borderColor="gray.400" bg="gray.300" area="sidebar">
         <Sidebar />
       </GridItem>
       <GridItem
@@ -116,12 +91,7 @@ export function Editor() {
       >
         <Sidepanel />
       </GridItem>
-      <GridItem
-        borderBottom="2px"
-        borderColor="gray.400"
-        bg="gray.200"
-        area="toolbar"
-      >
+      <GridItem borderBottom="2px" borderColor="gray.400" bg="gray.200" area="toolbar">
         <Toolbar />
       </GridItem>
       <GridItem

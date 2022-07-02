@@ -1,10 +1,4 @@
-import {
-  atom,
-  atomFamily,
-  DefaultValue,
-  selector,
-  selectorFamily,
-} from "recoil";
+import { atom, atomFamily, DefaultValue, selector, selectorFamily } from "recoil";
 
 export const elementsState = atom<number[]>({
   key: "elements",
@@ -28,6 +22,7 @@ type RectangleState = {
 type SvgState = {
   type: "svg";
   html: string;
+  src: string;
 };
 
 type ImageState = {
@@ -42,8 +37,7 @@ export type TextState = {
   color: string;
 };
 
-export type ElementState = CommonState &
-  (RectangleState | ImageState | SvgState | TextState);
+export type ElementState = CommonState & (RectangleState | ImageState | SvgState | TextState);
 
 export const defaultStyle = {
   top: 20,

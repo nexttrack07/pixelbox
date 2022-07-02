@@ -1,7 +1,8 @@
 import { Box } from "@chakra-ui/react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { elementsState, selectedElementIdsState} from "stores/element.store";
+import { elementsState, selectedElementIdsState } from "stores/element.store";
 import { Element } from "components";
+import { Suspense } from "react";
 
 export function Canvas() {
   const elements = useRecoilValue(elementsState);

@@ -1,17 +1,38 @@
 import { Box } from "@chakra-ui/react";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import {
-  elementState,
-  isSelectedState,
-  selectedElementIdsState,
-} from "stores/element.store";
-import { useState } from "react";
+import { selectorFamily, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { elementState, isSelectedState, selectedElementIdsState } from "stores/element.store";
+import { Suspense, useEffect, useState } from "react";
 import { useShiftKeyPressed } from "hooks";
 import { Rnd, RndDragCallback, RndResizeCallback } from "react-rnd";
 
 type ElementProps = {
   id: number;
 };
+
+/**
+ * Returns the width and height for the specified image.
+ */
+export const getImageDimensions = (src: string) => {
+  return new Promise<{ width: number; height: number }>((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => {
+      resolve({ width: image.width, height: image.height });
+    };
+    image.onerror = (error) => {
+      reject(error);
+    };
+    image.src = src;
+  });
+};
+
+const imageSizeState = selectorFamily({
+  key: "imageSize",
+  get: (src: string) => () => {
+    if (!src) return;
+
+    return getImageDimensions(src);
+  },
+});
 
 export function Element({ id }: ElementProps) {
   const [element, setElement] = useRecoilState(elementState(id));
@@ -53,7 +74,11 @@ export function Element({ id }: ElementProps) {
 
   function renderElementComponent() {
     if (element.type === "svg") {
-      return <div dangerouslySetInnerHTML={{ __html: element.html }} />;
+      return (
+        <Suspense fallback={<div>Loading image size...</div>}>
+          <ImageContainer url="" html={element.html} id={id} />
+        </Suspense>
+      );
     } else if (element.type === "text") {
       return <Box sx={{ fontSize: element.fontSize }}>{element.content}</Box>;
     }
@@ -63,6 +88,8 @@ export function Element({ id }: ElementProps) {
 
   return (
     <Rnd
+      // size={{ width: element.style.width, height: element.style.height }}
+      // position={{ x: element.style.left, y: element.style.top }}
       default={{
         width: element.style.width,
         height: element.style.height,
@@ -81,6 +108,27 @@ export function Element({ id }: ElementProps) {
       {renderElementComponent()}
     </Rnd>
   );
+}
+
+function ImageContainer({ url, html, id }: { url: string; html: string; id: number }) {
+  const imageSize = useRecoilValue(imageSizeState(url));
+  const setElement = useSetRecoilState(elementState(id));
+
+  useEffect(() => {
+    if (imageSize) {
+      console.log("changing size...");
+      setElement((element) => ({
+        ...element,
+        style: {
+          ...element.style,
+          height: imageSize.height,
+          width: imageSize.width,
+        },
+      }));
+    }
+  }, [imageSize]);
+
+  return <div dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
 const resizeHandleStyles = {
