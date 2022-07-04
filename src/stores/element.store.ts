@@ -14,18 +14,18 @@ export type CommonState = {
   };
 };
 
-type RectangleState = {
+export type RectangleState = {
   type: "rectangle";
   color: string;
 };
 
-type SvgState = {
+export type SvgState = {
   type: "svg";
   html: string;
   src: string;
 };
 
-type ImageState = {
+export type ImageState = {
   type: "image";
   src: string;
 };

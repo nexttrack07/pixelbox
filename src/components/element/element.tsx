@@ -1,6 +1,19 @@
 import { Box } from "@chakra-ui/react";
-import { selectorFamily, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { elementState, isSelectedState, selectedElementIdsState } from "stores/element.store";
+import {
+  selectorFamily,
+  useRecoilState,
+  useRecoilValue,
+  useResetRecoilState,
+  useSetRecoilState,
+} from "recoil";
+import {
+  CommonState,
+  ElementState,
+  elementState,
+  ImageState,
+  isSelectedState,
+  selectedElementIdsState,
+} from "stores/element.store";
 import { Suspense, useEffect, useState } from "react";
 import { useShiftKeyPressed } from "hooks";
 import { Rnd, RndDragCallback, RndResizeCallback } from "react-rnd";
@@ -35,10 +48,55 @@ const imageSizeState = selectorFamily({
 });
 
 export function Element({ id }: ElementProps) {
+  const element = useRecoilValue(elementState(id));
+
+  function renderElementComponent() {
+    if (element.type === "svg") {
+      return (
+        <Suspense fallback={<div>Loading image size...</div>}>
+          <ImageContainer url={element.src} html={element.html} id={id} />
+        </Suspense>
+      );
+    } else if (element.type === "text") {
+      return <Box sx={{ fontSize: element.fontSize }}>{element.content}</Box>;
+    }
+
+    return null;
+  }
+
+  return renderElementComponent();
+}
+
+function ImageContainer({ url, html, id }: { url: string; html: string; id: number }) {
+  const imageSize = useRecoilValue(imageSizeState(url));
   const [element, setElement] = useRecoilState(elementState(id));
   const setSelectedElement = useSetRecoilState(selectedElementIdsState);
   const isSelected = useRecoilValue(isSelectedState(id));
   const shiftKeyPressed = useShiftKeyPressed();
+
+  const handleMouseDown = () => {
+    setSelectedElement((ids) => {
+      if (isSelected) return ids;
+
+      if (shiftKeyPressed) return [...ids, id];
+
+      return [id];
+    });
+  };
+
+  useEffect(() => {
+    if (imageSize) {
+      console.log("changing size...");
+      setElement((element) => ({
+        ...element,
+        style: {
+          ...element.style,
+          height: imageSize.height,
+          width: imageSize.width,
+        },
+      }));
+    }
+  }, [imageSize]);
 
   const handleResize: RndResizeCallback = (e, dir, ref, delta, position) => {
     setElement((element) => ({
@@ -62,40 +120,16 @@ export function Element({ id }: ElementProps) {
     }));
   };
 
-  const handleMouseDown = () => {
-    setSelectedElement((ids) => {
-      if (isSelected) return ids;
-
-      if (shiftKeyPressed) return [...ids, id];
-
-      return [id];
-    });
-  };
-
-  function renderElementComponent() {
-    if (element.type === "svg") {
-      return (
-        <Suspense fallback={<div>Loading image size...</div>}>
-          <ImageContainer url="" html={element.html} id={id} />
-        </Suspense>
-      );
-    } else if (element.type === "text") {
-      return <Box sx={{ fontSize: element.fontSize }}>{element.content}</Box>;
-    }
-
-    return null;
-  }
-
   return (
     <Rnd
-      // size={{ width: element.style.width, height: element.style.height }}
-      // position={{ x: element.style.left, y: element.style.top }}
-      default={{
-        width: element.style.width,
-        height: element.style.height,
-        x: element.style.left,
-        y: element.style.top,
-      }}
+      size={{ width: element.style.width, height: element.style.height }}
+      position={{ x: element.style.left, y: element.style.top }}
+      // default={{
+      //   width: element.style.width,
+      //   height: element.style.height,
+      //   x: element.style.left,
+      //   y: element.style.top,
+      // }}
       onResize={handleResize}
       onDrag={handleDrag}
       onMouseDown={handleMouseDown}
@@ -105,30 +139,9 @@ export function Element({ id }: ElementProps) {
       resizeHandleWrapperStyle={{ display: isSelected ? "block" : "none" }}
       bounds="parent"
     >
-      {renderElementComponent()}
+      <div dangerouslySetInnerHTML={{ __html: html }} />
     </Rnd>
   );
-}
-
-function ImageContainer({ url, html, id }: { url: string; html: string; id: number }) {
-  const imageSize = useRecoilValue(imageSizeState(url));
-  const setElement = useSetRecoilState(elementState(id));
-
-  useEffect(() => {
-    if (imageSize) {
-      console.log("changing size...");
-      setElement((element) => ({
-        ...element,
-        style: {
-          ...element.style,
-          height: imageSize.height,
-          width: imageSize.width,
-        },
-      }));
-    }
-  }, [imageSize]);
-
-  return <div dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
 const resizeHandleStyles = {
