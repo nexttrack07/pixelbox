@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Icon, theme } from "@chakra-ui/react";
 import {
   selectorFamily,
   useRecoilState,
@@ -14,9 +14,10 @@ import {
   isSelectedState,
   selectedElementIdsState,
 } from "stores/element.store";
-import { Suspense, useEffect, useState } from "react";
+import { MouseEvent as ReactMouseEvent, Suspense, useEffect, useState } from "react";
 import { useShiftKeyPressed } from "hooks";
 import { Rnd, RndDragCallback, RndResizeCallback } from "react-rnd";
+import { Rotate } from "tabler-icons-react";
 
 type ElementProps = {
   id: number;
@@ -73,6 +74,32 @@ function ImageContainer({ url, html, id }: { url: string; html: string; id: numb
   const setSelectedElement = useSetRecoilState(selectedElementIdsState);
   const isSelected = useRecoilValue(isSelectedState(id));
   const shiftKeyPressed = useShiftKeyPressed();
+  const [rotation, setRotation] = useState(100);
+  // const [isRotating, setIsRotating] = useState(false);
+
+  // useEffect(() => {
+  //   function handleRotateMove(e: MouseEvent) {
+  //     e.stopPropagation();
+  //     if (isRotating) {
+  //       const rectX = element.style.left + element.style.width / 2;
+  //       const rectY = element.style.top + element.style.height / 2;
+  //       const angle = Math.atan2(e.clientY - rectY, e.clientX - rectX) + Math.PI / 2;
+  //       setRotation(Math.round((angle * 180) / Math.PI));
+  //     }
+  //   }
+
+  //   function handleRotateUp(e: MouseEvent) {
+  //     e.stopPropagation();
+  //     setIsRotating(false);
+  //   }
+
+  //   document.addEventListener("mousemove", handleRotateMove);
+  //   document.addEventListener("mouseup", handleRotateUp);
+
+  //   return () => {
+  //     document.removeEventListener("mousemove", handleRotateMove);
+  //   };
+  // }, [isRotating, element.style]);
 
   const handleMouseDown = () => {
     setSelectedElement((ids) => {
@@ -124,22 +151,42 @@ function ImageContainer({ url, html, id }: { url: string; html: string; id: numb
     <Rnd
       size={{ width: element.style.width, height: element.style.height }}
       position={{ x: element.style.left, y: element.style.top }}
-      // default={{
-      //   width: element.style.width,
-      //   height: element.style.height,
-      //   x: element.style.left,
-      //   y: element.style.top,
-      // }}
       onResize={handleResize}
       onDrag={handleDrag}
       onMouseDown={handleMouseDown}
       lockAspectRatio
       resizeHandleStyles={resizeHandleStyles}
-      style={{ padding: 5 }}
-      resizeHandleWrapperStyle={{ display: isSelected ? "block" : "none" }}
+      style={{ padding: 5, transform: `rotate(${rotation}deg)` }}
+      resizeHandleWrapperStyle={{
+        display: isSelected ? "block" : "none",
+      }}
       bounds="parent"
     >
-      <div dangerouslySetInnerHTML={{ __html: html }} />
+      <div style={{ position: "relative" }}>
+        <div dangerouslySetInnerHTML={{ __html: html }} />
+        <Icon
+          // onMouseDown={(e: ReactMouseEvent) => {
+          //   e.stopPropagation();
+          //   setIsRotating(true);
+          // }}
+          sx={{
+            position: "absolute",
+            display: isSelected ? "block" : "none",
+            left: "50%",
+            top: -16,
+            transform: "translateX(-50%)",
+            backgroundColor: "white",
+            boxShadow: "0px 0px 1px rgba(0,0,0,.5)",
+            borderRadius: "100%",
+            border: `1px solid ${theme.colors.gray[300]}`,
+          }}
+          // borderColor="gray.400"
+          p={1}
+          h={6}
+          w={6}
+          as={Rotate}
+        />
+      </div>
     </Rnd>
   );
 }

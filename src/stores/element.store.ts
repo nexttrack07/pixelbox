@@ -9,8 +9,8 @@ export type CommonState = {
   style: {
     top: number;
     left: number;
-    width: number | "auto";
-    height: number | "auto";
+    width: number;
+    height: number;
   };
 };
 

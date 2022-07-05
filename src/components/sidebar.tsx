@@ -1,11 +1,6 @@
 import { atom, useRecoilState, useSetRecoilState } from "recoil";
 import { Center, IconButton, Stack, StackDivider } from "@chakra-ui/react";
-import {
-  ChartInfographic,
-  Photo,
-  Template,
-  TextResize,
-} from "tabler-icons-react";
+import { ChartInfographic, Photo, Template, TextResize } from "tabler-icons-react";
 
 const sidebarItems = [
   { id: "templates", icon: <Template /> },
