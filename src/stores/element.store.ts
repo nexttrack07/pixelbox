@@ -73,16 +73,25 @@ export const selectedElementState = selector<ElementState | undefined>({
   get: ({ get }) => {
     const ids = get(selectedElementIdsState);
 
-    if (ids.length === 1) {
+    if (ids.length >= 1) {
       return get(elementState(ids[0]));
     }
   },
   set: ({ set, get }, newElementValue) => {
     const ids = get(selectedElementIdsState);
 
-    if (ids.length === 1 && newElementValue) {
+    if (ids.length >= 1 && newElementValue) {
       set(elementState(ids[0]), newElementValue);
     }
+  },
+});
+
+export const selectedElementType = selector({
+  key: "selectedElementType",
+  get: ({ get }) => {
+    const selectedElement = get(selectedElementState);
+
+    return selectedElement?.type;
   },
 });
 

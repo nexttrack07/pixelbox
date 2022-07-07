@@ -127,7 +127,6 @@ function Moveable({
     (e: MouseEvent) => {
       e.stopPropagation();
       if (status === "moving") {
-        console.log("moving...");
         onDrag({ x: e.movementX, y: e.movementY });
       } else if (status === "rotating") {
         if (!rotateRef.current) return;

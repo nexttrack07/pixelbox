@@ -1,18 +1,11 @@
-import {
-  Box,
-  Fade,
-  Heading,
-  StackDivider,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, Fade, Heading, StackDivider, Text, VStack } from "@chakra-ui/react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   defaultStyle,
   elementsState,
   elementState,
   ElementState,
-  selectedElementState,
+  selectedElementType,
   TextState,
 } from "stores/element.store";
 import { GraphicsPanel } from "./graphics-panel";
@@ -34,7 +27,9 @@ const selectedPanelMap: Record<ElementState["type"], JSX.Element> = {
 
 export function Sidepanel() {
   const sidebarValue = useRecoilValue(sidebarState);
-  const selectedElement = useRecoilValue(selectedElementState);
+  const selectedElement = useRecoilValue(selectedElementType);
+
+  console.log("rendering sidepanel...");
 
   return (
     <>
@@ -46,7 +41,7 @@ export function Sidepanel() {
             position="absolute"
             sx={{ top: 0, left: 0, right: 0, bottom: 0 }}
           >
-            {selectedElement && selectedPanelMap[selectedElement.type]}
+            {selectedPanelMap[selectedElement]}
           </Box>
         </Fade>
       )}
@@ -74,11 +69,7 @@ function TextPanel() {
     });
   }
   return (
-    <VStack
-      spacing={6}
-      divider={<StackDivider borderColor="gray.500" />}
-      alignItems="center"
-    >
+    <VStack spacing={6} divider={<StackDivider borderColor="gray.500" />} alignItems="center">
       <Heading
         sx={{ cursor: "pointer" }}
         onClick={() => {

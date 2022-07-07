@@ -21,6 +21,7 @@ export function GraphicsPanel() {
             left: 100,
             height: 100,
             width: 100,
+            rotation: 0,
           },
           html,
           src: url,

@@ -1,18 +1,6 @@
-import {
-  Box,
-  Button,
-  Divider,
-  Flex,
-  IconButton,
-  Stack,
-  StackDivider,
-} from "@chakra-ui/react";
+import { Box, Button, Divider, Flex, IconButton, Stack, StackDivider } from "@chakra-ui/react";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import {
-  canvasState,
-  elementsState,
-  selectedElementIdsState,
-} from "stores/element.store";
+import { canvasState, elementsState, selectedElementIdsState } from "stores/element.store";
 import {
   ArrowBarToDown,
   ArrowBarToUp,
@@ -26,70 +14,43 @@ import {
 } from "tabler-icons-react";
 
 export function Toolbar() {
-  const [selectedItems, setSelectedItems] = useRecoilState(
-    selectedElementIdsState
-  );
+  const [selectedItems, setSelectedItems] = useRecoilState(selectedElementIdsState);
   const setElementsState = useSetRecoilState(elementsState);
-  const [canvas, setCanvas] = useRecoilState(canvasState);
+  // const [canvas, setCanvas] = useRecoilState(canvasState);
+
+  // console.log("canvas ", canvas);
 
   function handleDeleteItems() {
-    setElementsState((elements) =>
-      elements.filter((el) => !selectedItems.includes(el))
-    );
+    setElementsState((elements) => elements.filter((el) => !selectedItems.includes(el)));
     setSelectedItems([]);
   }
 
-  function handleSaveTemplate() {
-    localStorage.setItem("random_canvas", JSON.stringify(canvas));
-  }
+  // function handleSaveTemplate() {
+  //   localStorage.setItem("random_canvas", JSON.stringify(canvas));
+  // }
 
-  function handleGetTemplate() {
-    const jsonCanvasItem = localStorage.getItem("random_canvas");
+  // function handleGetTemplate() {
+  //   const jsonCanvasItem = localStorage.getItem("random_canvas");
 
-    if (jsonCanvasItem) {
-      setCanvas(JSON.parse(jsonCanvasItem));
-    }
-  }
+  //   if (jsonCanvasItem) {
+  //     setCanvas(JSON.parse(jsonCanvasItem));
+  //   }
+  // }
 
   return (
     <Flex alignItems="center" p={2}>
       <Stack divider={<StackDivider borderColor="gray.400" />} direction="row">
-        <IconButton
-          aria-label="go back"
-          disabled
-          variant="outline"
-          icon={<FileArrowLeft />}
-        />
-        <IconButton
-          aria-label="go forward"
-          disabled
-          variant="outline"
-          icon={<FileArrowRight />}
-        />
+        <IconButton aria-label="go back" disabled variant="outline" icon={<FileArrowLeft />} />
+        <IconButton aria-label="go forward" disabled variant="outline" icon={<FileArrowRight />} />
         <IconButton
           aria-label="duplicate layer"
           disabled
           variant="outline"
           icon={<LayersSubtract />}
         />
-        <IconButton
-          aria-label="Forward"
-          disabled
-          variant="outline"
-          icon={<ArrowBarToUp />}
-        />
-        <IconButton
-          aria-label="Backward"
-          disabled
-          variant="outline"
-          icon={<ArrowBarToDown />}
-        />
-        <IconButton
-          aria-label="Grid"
-          disabled
-          variant="outline"
-          icon={<GridDots />}
-        />
+        <IconButton aria-label="Forward" disabled variant="outline" icon={<ArrowBarToUp />} />
+        <IconButton aria-label="Backward" disabled variant="outline" icon={<ArrowBarToDown />} />
+        <IconButton aria-label="Grid" disabled variant="outline" icon={<GridDots />} />
         <IconButton
           disabled={selectedItems.length === 0}
           onClick={handleDeleteItems}
@@ -101,7 +62,7 @@ export function Toolbar() {
       <Box flex={1} />
       <Stack direction="row" divider={<StackDivider borderColor="gray.400" />}>
         <Button
-          onClick={handleGetTemplate}
+          // onClick={handleGetTemplate}
           size="xs"
           leftIcon={<Template />}
           color="gray.500"
@@ -110,7 +71,7 @@ export function Toolbar() {
           Get Template
         </Button>
         <Button
-          onClick={handleSaveTemplate}
+          // onClick={handleSaveTemplate}
           size="xs"
           variant="ghost"
           leftIcon={<FileDatabase />}
