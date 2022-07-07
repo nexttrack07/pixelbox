@@ -3,7 +3,7 @@ import { Box } from "@chakra-ui/react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { elementState, isSelectedState, selectedElementIdsState } from "stores/element.store";
 import { useEventListener, useSetDefaultDimensions, useShiftKeyPressed } from "hooks";
-import { Rotate } from "tabler-icons-react";
+import { Rotate, X } from "tabler-icons-react";
 
 type ElementProps = {
   id: number;
@@ -21,8 +21,8 @@ export function Element({ id }: ElementProps) {
       ...el,
       style: {
         ...el.style,
-        left: Math.min(Math.max(0, el.style.left + delta.x), 700 - el.style.width),
-        top: Math.min(Math.max(0, el.style.top + delta.y), 550 - el.style.height),
+        left: delta.x,
+        top: delta.y,
       },
     }));
   }
@@ -47,6 +47,17 @@ export function Element({ id }: ElementProps) {
     }));
   }
 
+  function handleResize(dimension: DimensionDelta) {
+    setElement((el) => ({
+      ...el,
+      style: {
+        ...el.style,
+        width: dimension.width,
+        height: dimension.height,
+      },
+    }));
+  }
+
   function renderElement() {
     if (element.type === "svg") {
       return <div dangerouslySetInnerHTML={{ __html: element.html }} />;
@@ -64,19 +75,29 @@ export function Element({ id }: ElementProps) {
       onMouseDown={handleSelectElement}
       onRotate={handleRotate}
       onDrag={handleDrag}
+      onResize={handleResize}
     >
       {renderElement()}
     </Moveable>
   );
 }
 
-type Status = "idle" | "rotating" | "moving" | "reszing";
+type Status =
+  | "idle"
+  | "rotating"
+  | "moving"
+  | "resizing-br"
+  | "resizing-tl"
+  | "resizing-bl"
+  | "resizing-tr";
 type PositionDelta = { x: number; y: number };
+type DimensionDelta = { width: number; height: number };
 type MoveableProps = {
   onDrag: (p: PositionDelta) => void;
   children: JSX.Element;
   onMouseDown: () => void;
   onRotate: (r: number) => void;
+  onResize: (d: DimensionDelta) => void;
   show: boolean;
   styleProps: {
     height: number;
@@ -91,6 +112,7 @@ function Moveable({
   show,
   onDrag,
   onMouseDown,
+  onResize,
   onRotate,
   children,
   styleProps: { rotation, ...styles },
@@ -98,6 +120,7 @@ function Moveable({
   const documentRef = useRef<Document>(document);
   const ref = useRef<HTMLDivElement>(null);
   const [status, setStatus] = useState<Status>("idle");
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
 
   const handleMouseUp = useCallback((e: MouseEvent) => {
     e.stopPropagation();
@@ -107,12 +130,19 @@ function Moveable({
   const handleDragMouseDown = useCallback((e: ReactMouseEvent) => {
     e.stopPropagation();
     setStatus("moving");
+    setMouse({ x: e.clientX, y: e.clientY });
   }, []);
 
   const handleRotateMouseDown = useCallback((e: ReactMouseEvent) => {
     e.stopPropagation();
     setStatus("rotating");
   }, []);
+
+  const handleResizeMouseDown = (e: ReactMouseEvent, stat: Status) => {
+    e.stopPropagation();
+    setStatus(stat);
+    setMouse({ x: e.clientX, y: e.clientY });
+  };
 
   function getDegrees(mouseX: number, mouseY: number, ref: RefObject<HTMLDivElement>) {
     if (!ref.current) return 0;
@@ -123,19 +153,57 @@ function Moveable({
     const angle = Math.atan2(mouseY - rectY, mouseX - rectX) + Math.PI / 2;
     return Math.round((angle * 180) / Math.PI);
   }
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
-      e.stopPropagation();
-      if (status === "moving") {
-        onDrag({ x: e.movementX, y: e.movementY });
-      } else if (status === "rotating") {
-        if (!ref.current) return;
-        const r = getDegrees(e.clientX, e.clientY, ref);
-        onRotate(r);
-      }
-    },
-    [status, ref]
-  );
+  const handleMouseMove = (e: MouseEvent) => {
+    e.stopPropagation();
+    if (status === "moving") {
+      if (!ref.current) return;
+      const newX = mouse.x - e.clientX;
+      const newY = mouse.y - e.clientY;
+
+      let x = styles.left - newX;
+      let y = styles.top - newY;
+
+      x = Math.min(Math.max(0, x), 700 - styles.width);
+      y = Math.min(Math.max(0, y), 550 - styles.height);
+
+      onDrag({ x, y });
+      setMouse({ x: e.clientX, y: e.clientY });
+    } else if (status === "rotating") {
+      if (!ref.current) return;
+      const r = getDegrees(e.clientX, e.clientY, ref);
+      onRotate(r);
+    } else if (status === "resizing-br") {
+      if (!ref.current) return;
+
+      const width = styles.width - (mouse.x - e.clientX);
+      const height = styles.height - (mouse.y - e.clientY);
+
+      onResize({ width, height });
+    } else if (status === "resizing-tl") {
+      const width = styles.width + (mouse.x - e.clientX);
+      const height = styles.height + (mouse.y - e.clientY);
+      const x = styles.left - (mouse.x - e.clientX);
+      const y = styles.top - (mouse.y - e.clientY);
+
+      onDrag({ x, y });
+      onResize({ width, height });
+    } else if (status === "resizing-bl") {
+      const width = styles.width + (mouse.x - e.clientX);
+      const height = styles.height - (mouse.y - e.clientY);
+      const x = styles.left - (mouse.x - e.clientX);
+      const y = styles.top;
+
+      onDrag({ x, y });
+      onResize({ width, height });
+    } else if (status === "resizing-tr") {
+      const width = styles.width - (mouse.x - e.clientX);
+      const height = styles.height + (mouse.y - e.clientY);
+      const x = styles.left;
+      const y = styles.top - (mouse.y - e.clientY);
+      onDrag({ x, y });
+      onResize({ width, height });
+    }
+  };
 
   useEventListener("mouseup", handleMouseUp);
   useEventListener("mousemove", handleMouseMove, documentRef, [status, ref]);
@@ -195,6 +263,7 @@ function Moveable({
           <Rotate size={14} />
         </Box>
         <Box
+          onMouseDown={(e) => handleResizeMouseDown(e, "resizing-tr")}
           sx={{
             top: 0,
             right: 0,
@@ -203,6 +272,7 @@ function Moveable({
           }}
         />
         <Box
+          onMouseDown={(e) => handleResizeMouseDown(e, "resizing-bl")}
           sx={{
             bottom: 0,
             left: 0,
@@ -211,6 +281,7 @@ function Moveable({
           }}
         />
         <Box
+          onMouseDown={(e) => handleResizeMouseDown(e, "resizing-br")}
           sx={{
             bottom: 0,
             right: 0,
@@ -219,6 +290,7 @@ function Moveable({
           }}
         />
         <Box
+          onMouseDown={(e) => handleResizeMouseDown(e, "resizing-tl")}
           sx={{
             top: 0,
             left: 0,
