@@ -96,7 +96,7 @@ function Moveable({
   styleProps: { rotation, ...styles },
 }: MoveableProps) {
   const documentRef = useRef<Document>(document);
-  const rotateRef = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const [status, setStatus] = useState<Status>("idle");
 
   const handleMouseUp = useCallback((e: MouseEvent) => {
@@ -129,16 +129,16 @@ function Moveable({
       if (status === "moving") {
         onDrag({ x: e.movementX, y: e.movementY });
       } else if (status === "rotating") {
-        if (!rotateRef.current) return;
-        const r = getDegrees(e.clientX, e.clientY, rotateRef);
+        if (!ref.current) return;
+        const r = getDegrees(e.clientX, e.clientY, ref);
         onRotate(r);
       }
     },
-    [status, rotateRef]
+    [status, ref]
   );
 
   useEventListener("mouseup", handleMouseUp);
-  useEventListener("mousemove", handleMouseMove, documentRef, [status, rotateRef]);
+  useEventListener("mousemove", handleMouseMove, documentRef, [status, ref]);
 
   if (!show)
     return (
@@ -157,7 +157,7 @@ function Moveable({
   return (
     <Box
       onMouseDown={handleDragMouseDown}
-      ref={rotateRef}
+      ref={ref}
       style={{
         position: "absolute",
         transform: `rotate(${rotation}deg)`,
