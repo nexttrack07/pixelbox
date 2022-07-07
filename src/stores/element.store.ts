@@ -11,6 +11,7 @@ export type CommonState = {
     left: number;
     width: number;
     height: number;
+    rotation: number;
   };
 };
 
@@ -44,6 +45,7 @@ export const defaultStyle = {
   left: 20,
   width: 200,
   height: 170,
+  rotation: 110,
 };
 
 export const elementState = atomFamily<ElementState, number>({

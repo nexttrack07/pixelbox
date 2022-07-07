@@ -21,7 +21,9 @@ export function Canvas() {
       }}
     >
       {elements.map((element) => (
-        <Element key={element} id={element} />
+        <Suspense key={element} fallback={<div>Loading...</div>}>
+          <Element key={element} id={element} />
+        </Suspense>
       ))}
     </Box>
   );
