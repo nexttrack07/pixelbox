@@ -45,7 +45,7 @@ export const defaultStyle = {
   left: 20,
   width: 200,
   height: 170,
-  rotation: 110,
+  rotation: 0,
 };
 
 export const elementState = atomFamily<ElementState, number>({

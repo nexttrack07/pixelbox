@@ -29,8 +29,6 @@ export function Sidepanel() {
   const sidebarValue = useRecoilValue(sidebarState);
   const selectedElement = useRecoilValue(selectedElementType);
 
-  console.log("rendering sidepanel...");
-
   return (
     <>
       {sidepanelMap[sidebarValue]}
