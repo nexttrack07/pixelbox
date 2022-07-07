@@ -1,23 +1,15 @@
-import { Box, Icon, theme } from "@chakra-ui/react";
 import {
-  selectorFamily,
-  useRecoilState,
-  useRecoilValue,
-  useResetRecoilState,
-  useSetRecoilState,
-} from "recoil";
-import {
-  CommonState,
-  ElementState,
-  elementState,
-  ImageState,
-  isSelectedState,
-  selectedElementIdsState,
-} from "stores/element.store";
-import { MouseEvent as ReactMouseEvent, Suspense, useEffect, useState } from "react";
-import { useShiftKeyPressed } from "hooks";
-import { Rnd, RndDragCallback, RndResizeCallback } from "react-rnd";
-import { Rotate } from "tabler-icons-react";
+  useCallback,
+  MouseEvent as ReactMouseEvent,
+  useRef,
+  useState,
+  Attributes,
+  StyleHTMLAttributes,
+} from "react";
+import { Box } from "@chakra-ui/react";
+import { selectorFamily, useRecoilState } from "recoil";
+import { elementState } from "stores/element.store";
+import { useEventListener } from "hooks";
 
 type ElementProps = {
   id: number;
@@ -49,183 +41,85 @@ const imageSizeState = selectorFamily({
 });
 
 export function Element({ id }: ElementProps) {
-  const element = useRecoilValue(elementState(id));
+  const [element, setElement] = useRecoilState(elementState(id));
 
-  function renderElementComponent() {
-    if (element.type === "svg") {
-      return (
-        <Suspense fallback={<div>Loading image size...</div>}>
-          <ImageContainer url={element.src} html={element.html} id={id} />
-        </Suspense>
-      );
-    } else if (element.type === "text") {
-      return <Box sx={{ fontSize: element.fontSize }}>{element.content}</Box>;
-    }
-
-    return null;
+  function handleDrag(delta: { x: number; y: number }) {
+    setElement((el) => ({
+      ...el,
+      style: {
+        ...el.style,
+        left: Math.min(Math.max(0, el.style.left + delta.x), 700 - el.style.width),
+        top: Math.min(Math.max(0, el.style.top + delta.y), 550 - el.style.height),
+      },
+    }));
   }
 
-  return renderElementComponent();
-}
-
-function ImageContainer({ url, html, id }: { url: string; html: string; id: number }) {
-  const imageSize = useRecoilValue(imageSizeState(url));
-  const [element, setElement] = useRecoilState(elementState(id));
-  const setSelectedElement = useSetRecoilState(selectedElementIdsState);
-  const isSelected = useRecoilValue(isSelectedState(id));
-  const shiftKeyPressed = useShiftKeyPressed();
-  const [rotation, setRotation] = useState(100);
-  // const [isRotating, setIsRotating] = useState(false);
-
-  // useEffect(() => {
-  //   function handleRotateMove(e: MouseEvent) {
-  //     e.stopPropagation();
-  //     if (isRotating) {
-  //       const rectX = element.style.left + element.style.width / 2;
-  //       const rectY = element.style.top + element.style.height / 2;
-  //       const angle = Math.atan2(e.clientY - rectY, e.clientX - rectX) + Math.PI / 2;
-  //       setRotation(Math.round((angle * 180) / Math.PI));
-  //     }
-  //   }
-
-  //   function handleRotateUp(e: MouseEvent) {
-  //     e.stopPropagation();
-  //     setIsRotating(false);
-  //   }
-
-  //   document.addEventListener("mousemove", handleRotateMove);
-  //   document.addEventListener("mouseup", handleRotateUp);
-
-  //   return () => {
-  //     document.removeEventListener("mousemove", handleRotateMove);
-  //   };
-  // }, [isRotating, element.style]);
-
-  const handleMouseDown = () => {
-    setSelectedElement((ids) => {
-      if (isSelected) return ids;
-
-      if (shiftKeyPressed) return [...ids, id];
-
-      return [id];
-    });
-  };
-
-  useEffect(() => {
-    if (imageSize) {
-      console.log("changing size...");
-      setElement((element) => ({
-        ...element,
-        style: {
-          ...element.style,
-          height: imageSize.height,
-          width: imageSize.width,
-        },
-      }));
+  function renderElement() {
+    if (element.type === "svg") {
+      return <div dangerouslySetInnerHTML={{ __html: element.html }} />;
+    } else if (element.type === "text") {
+      return <Box sx={{ fontSize: element.fontSize }}>{element.content}</Box>;
+    } else {
+      return <Box>Type: {element.type}</Box>;
     }
-  }, [imageSize]);
-
-  const handleResize: RndResizeCallback = (e, dir, ref, delta, position) => {
-    setElement((element) => ({
-      ...element,
-      style: {
-        ...element.style,
-        width: ref.offsetWidth,
-        height: ref.offsetHeight,
-      },
-    }));
-  };
-
-  const handleDrag: RndDragCallback = (e, data) => {
-    setElement((element) => ({
-      ...element,
-      style: {
-        ...element.style,
-        left: data.x,
-        top: data.y,
-      },
-    }));
-  };
+  }
 
   return (
-    <Rnd
-      size={{ width: element.style.width, height: element.style.height }}
-      position={{ x: element.style.left, y: element.style.top }}
-      onResize={handleResize}
-      onDrag={handleDrag}
-      onMouseDown={handleMouseDown}
-      lockAspectRatio
-      resizeHandleStyles={resizeHandleStyles}
-      style={{ padding: 5, transform: `rotate(${rotation}deg)` }}
-      resizeHandleWrapperStyle={{
-        display: isSelected ? "block" : "none",
-      }}
-      bounds="parent"
-    >
-      <div style={{ position: "relative" }}>
-        <div dangerouslySetInnerHTML={{ __html: html }} />
-        <Icon
-          // onMouseDown={(e: ReactMouseEvent) => {
-          //   e.stopPropagation();
-          //   setIsRotating(true);
-          // }}
-          sx={{
-            position: "absolute",
-            display: isSelected ? "block" : "none",
-            left: "50%",
-            top: -16,
-            transform: "translateX(-50%)",
-            backgroundColor: "white",
-            boxShadow: "0px 0px 1px rgba(0,0,0,.5)",
-            borderRadius: "100%",
-            border: `1px solid ${theme.colors.gray[300]}`,
-          }}
-          // borderColor="gray.400"
-          p={1}
-          h={6}
-          w={6}
-          as={Rotate}
-        />
-      </div>
-    </Rnd>
+    <Moveable styleProps={element.style} onDrag={handleDrag}>
+      {renderElement()}
+    </Moveable>
   );
 }
 
-const resizeHandleStyles = {
-  bottomRight: {
-    height: 15,
-    width: 15,
-    backgroundColor: "white",
-    boxShadow: "0px 0px 1px rgba(0,0,0,.5)",
-    borderRadius: "100%",
-    border: "1px solid gray",
-  },
-  bottomLeft: {
-    height: 15,
-    width: 15,
-    backgroundColor: "white",
-    boxShadow: "0px 0px 1px rgba(0,0,0,.5)",
-    borderRadius: "100%",
-    border: "1px solid gray",
-  },
-  topLeft: {
-    height: 15,
-    width: 15,
-    backgroundColor: "white",
-    boxShadow: "0px 0px 1px rgba(0,0,0,.5)",
-    borderRadius: "100%",
-    border: "1px solid gray",
-  },
-  topRight: {
-    height: 15,
-    width: 15,
-    backgroundColor: "white",
-    boxShadow: "0px 0px 1px rgba(0,0,0,.5)",
-    borderRadius: "100%",
-    border: "1px solid gray",
-  },
-  top: { backgroundColor: "#6095eb", height: 4 },
-  left: { backgroundColor: "#6095eb", width: 4 },
-  bottom: { backgroundColor: "#6095eb", height: 4 },
-  right: { backgroundColor: "#6095eb", width: 4 },
+type Status = "idle" | "rotating" | "moving" | "reszing";
+type PositionDelta = { x: number; y: number };
+type MoveableProps = {
+  onDrag: (p: PositionDelta) => void;
+  children: JSX.Element;
+  styleProps: {
+    height: number;
+    width: number;
+    top: number;
+    left: number;
+  };
 };
+
+function Moveable({ onDrag, children, styleProps }: MoveableProps) {
+  const documentRef = useRef<Document>(document);
+  const [status, setStatus] = useState<Status>("idle");
+
+  const handleMouseUp = useCallback((e: MouseEvent) => {
+    e.stopPropagation();
+    setStatus("idle");
+  }, []);
+
+  const handleDragMouseDown = useCallback((e: ReactMouseEvent) => {
+    e.stopPropagation();
+    setStatus("moving");
+  }, []);
+
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      e.stopPropagation();
+      if (status === "moving") {
+        onDrag({ x: e.movementX, y: e.movementY });
+      }
+    },
+    [status]
+  );
+
+  useEventListener("mouseup", handleMouseUp);
+  useEventListener("mousemove", handleMouseMove, documentRef, [status]);
+
+  return (
+    <div
+      onMouseDown={handleDragMouseDown}
+      style={{
+        position: "absolute",
+        ...styleProps,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
