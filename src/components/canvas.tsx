@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Fade, Slide } from "@chakra-ui/react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { elementsState, selectedElementIdsState } from "stores/element.store";
 import { Element } from "components";
@@ -22,7 +22,7 @@ export function Canvas() {
     >
       {elements.map((element) => (
         <Suspense key={element} fallback={<div>Loading...</div>}>
-          <Element key={element} id={element} />
+          <Element id={element} />
         </Suspense>
       ))}
     </Box>

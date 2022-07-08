@@ -1,5 +1,5 @@
 import { Box, Fade, Heading, StackDivider, Text, VStack } from "@chakra-ui/react";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { selector, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   defaultStyle,
   elementsState,
@@ -47,22 +47,24 @@ export function Sidepanel() {
   );
 }
 
-function TextPanel() {
-  const [elements, setElements] = useRecoilState(elementsState);
-  const setElementState = useSetRecoilState(elementState(elements.length));
+const elementsLength = selector({
+  key: "elementsLength",
+  get: ({ get }) => {
+    const elements = get(elementsState);
 
-  function handleAddText({
-    type = "text",
-    color = "black",
-    fontSize = 28,
-    content = "Add text",
-  }: Partial<TextState>) {
+    return elements.length;
+  },
+});
+
+function TextPanel() {
+  const setElements = useSetRecoilState(elementsState);
+  const lastIndex = useRecoilValue(elementsLength);
+  const setElementState = useSetRecoilState(elementState(lastIndex));
+
+  function handleAddText(textElement: TextState) {
     setElements((elements) => [...elements, elements.length]);
     setElementState({
-      type,
-      color,
-      fontSize,
-      content,
+      ...textElement,
       style: defaultStyle,
     });
   }
@@ -71,13 +73,51 @@ function TextPanel() {
       <Heading
         sx={{ cursor: "pointer" }}
         onClick={() => {
-          handleAddText({ fontSize: 32, content: "Add a heading" });
+          handleAddText(HeadingText);
         }}
       >
         Add a heading
       </Heading>
-      <Heading size="md">Add a subheading</Heading>
-      <Text>Add a paragraph</Text>
+      <Heading
+        sx={{ cursor: "pointer" }}
+        onClick={() => {
+          handleAddText(SubHeadingText);
+        }}
+        size="md"
+      >
+        Add a subheading
+      </Heading>
+      <Text
+        sx={{ cursor: "pointer" }}
+        onClick={() => {
+          handleAddText(ParagraphText);
+        }}
+      >
+        Add a paragraph
+      </Text>
     </VStack>
   );
 }
+
+const TextCommon: Pick<TextState, "color" | "type"> = {
+  color: "black",
+  type: "text",
+};
+
+const HeadingText: TextState = {
+  fontSize: 28,
+  content: "Add a heading",
+  ...TextCommon,
+};
+
+const SubHeadingText: TextState = {
+  fontSize: 20,
+  content: "Add a subheading",
+  ...TextCommon,
+};
+
+const ParagraphText: TextState = {
+  fontSize: 16,
+  content: "Add a paragraph",
+  ...TextCommon,
+};
