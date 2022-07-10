@@ -1,7 +1,13 @@
 import { useCallback, MouseEvent as ReactMouseEvent, useRef, useState, RefObject } from "react";
 import { Box } from "@chakra-ui/react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { elementState, isSelectedState, selectedElementIdsState } from "stores/element.store";
+import {
+  elementState,
+  isSelectedState,
+  selectedElementIdsState,
+  CommonState,
+  TextState,
+} from "stores/element.store";
 import { useEventListener, useSetDefaultDimensions, useShiftKeyPressed } from "hooks";
 import { Rotate, X } from "tabler-icons-react";
 
@@ -62,7 +68,20 @@ export function Element({ id }: ElementProps) {
     if (element.type === "svg") {
       return <div dangerouslySetInnerHTML={{ __html: element.html }} />;
     } else if (element.type === "text") {
-      return <Box sx={{ fontSize: element.fontSize }}>{element.content}</Box>;
+      return (
+        <Box
+          contentEditable
+          onInput={(e) => {
+            setElement((element) => ({
+              ...element,
+              content: e.currentTarget.textContent,
+            }));
+          }}
+          sx={{ fontSize: element.fontSize, color: element.color }}
+        >
+          {element.content}
+        </Box>
+      );
     } else {
       return <Box>Type: {element.type}</Box>;
     }
