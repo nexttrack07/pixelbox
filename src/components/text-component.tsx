@@ -69,7 +69,9 @@ export function TextComponent({
         cursor: isSelected ? (contentEditable ? "text" : "move") : "pointer",
       }}
       onMouseDown={onSelect}
-      onDoubleClick={() => setContentEditable(true)}
+      onDoubleClick={() => {
+        setContentEditable(true);
+      }}
       ref={textContainerRef}
     >
       <span

@@ -1,5 +1,5 @@
 import { Box, Button, Divider, Flex, IconButton, Stack, StackDivider } from "@chakra-ui/react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { canvasState, elementsState, selectedElementIdsState } from "stores/element.store";
 import {
   ArrowBarToDown,
@@ -13,20 +13,34 @@ import {
   Trash,
 } from "tabler-icons-react";
 
+function SaveTemplate() {
+  const canvas = useRecoilValue(canvasState);
+
+  function handleSaveTemplate() {
+    localStorage.setItem("random_canvas", JSON.stringify(canvas));
+  }
+
+  return (
+    <Button
+      onClick={handleSaveTemplate}
+      size="xs"
+      variant="ghost"
+      leftIcon={<FileDatabase />}
+      color="gray.500"
+    >
+      Save Template
+    </Button>
+  );
+}
+
 export function Toolbar() {
   const [selectedItems, setSelectedItems] = useRecoilState(selectedElementIdsState);
   const setElementsState = useSetRecoilState(elementsState);
-  const [canvas, setCanvas] = useRecoilState(canvasState);
-
-  // console.log("canvas ", canvas);
+  const setCanvas = useSetRecoilState(canvasState);
 
   function handleDeleteItems() {
     setElementsState((elements) => elements.filter((el) => !selectedItems.includes(el)));
     setSelectedItems([]);
-  }
-
-  function handleSaveTemplate() {
-    localStorage.setItem("random_canvas", JSON.stringify(canvas));
   }
 
   function handleGetTemplate() {
@@ -70,15 +84,7 @@ export function Toolbar() {
         >
           Get Template
         </Button>
-        <Button
-          onClick={handleSaveTemplate}
-          size="xs"
-          variant="ghost"
-          leftIcon={<FileDatabase />}
-          color="gray.500"
-        >
-          Save Template
-        </Button>
+        <SaveTemplate />
       </Stack>
     </Flex>
   );

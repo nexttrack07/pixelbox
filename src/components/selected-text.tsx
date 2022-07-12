@@ -18,18 +18,39 @@ import {
   Flex,
   Box,
 } from "@chakra-ui/react";
+import { selector, useRecoilValue, useSetRecoilState } from "recoil";
+import { selectedElementState, TextElement, Element } from "stores/element.store";
 import { Bold, Italic, Strikethrough, Underline } from "tabler-icons-react";
 
 const fonts = ["Roboto", "Helvetica", "Oswald", "Nunito", "Times New Roman", "Arial", "Comic sans"];
 
+function isTextElement(element?: Element): element is TextElement {
+  return (element as TextElement).content !== undefined;
+}
+
+const fontProps = selector({
+  key: "fontProps",
+  get: ({ get }) => {
+    const selectedElement = get(selectedElementState);
+
+    if (isTextElement(selectedElement)) {
+      return selectedElement.font;
+    }
+
+    return;
+  },
+});
+
 export function SelectedText() {
+  const setSelected = useSetRecoilState(selectedElementState);
+  const fontAttrs = useRecoilValue(fontProps);
   return (
     <VStack p={4} alignItems="flex-start" spacing={8}>
       <Text fontWeight="semibold" fontSize="lg">
         Font
       </Text>
       <HStack>
-        <Select borderColor="cyan.700" variant="outline">
+        <Select defaultValue={fontAttrs?.family} borderColor="cyan.700" variant="outline">
           {fonts.map((font) => (
             <option style={{ fontFamily: font }} key={font} value={font}>
               {font}
@@ -47,7 +68,24 @@ export function SelectedText() {
           <IconButton aria-label="underline" icon={<Underline />} />
           <IconButton aria-label="strike" icon={<Strikethrough />} />
         </ButtonGroup>
-        <NumberInput maxW={20} defaultValue={15} min={10} max={20}>
+        <NumberInput
+          onChange={(val) => {
+            setSelected((el) => {
+              if (isTextElement(el)) {
+                return {
+                  ...el,
+                  font: {
+                    ...el.font,
+                    size: parseInt(val),
+                  },
+                };
+              }
+              return el;
+            });
+          }}
+          maxW={20}
+          defaultValue={fontAttrs?.size}
+        >
           <NumberInputField borderColor="cyan.700" />
           <NumberInputStepper>
             <NumberIncrementStepper />
