@@ -1,11 +1,12 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { ChakraProvider } from '@chakra-ui/react'
-import { RecoilRoot } from 'recoil'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import { ChakraProvider } from "@chakra-ui/react";
+import { RecoilRoot } from "recoil";
 
-import { Editor } from 'pages'
+import { Editor } from "pages";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ChakraProvider>
       <RecoilRoot>
@@ -13,4 +14,4 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       </RecoilRoot>
     </ChakraProvider>
   </React.StrictMode>
-)
+);

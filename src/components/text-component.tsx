@@ -1,4 +1,4 @@
-import { Box, Text } from "@chakra-ui/react";
+import { useOutsideClick } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { elementState, isSelectedState, TextElement } from "stores/element.store";
@@ -15,14 +15,21 @@ export function TextComponent({
 }) {
   const setElement = useSetRecoilState(elementState(id));
   const isSelected = useRecoilValue(isSelectedState(id));
+  const [contentEditable, setContentEditable] = useState(false);
   const [dimension, setDimension] = useState({ width: 500, height: 50 });
   const textRef = useRef<HTMLDivElement>(null);
+  const textContainerRef = useRef<HTMLDivElement>(null);
+
+  useOutsideClick({
+    ref: textContainerRef,
+    handler: () => setContentEditable(false),
+  });
 
   useEffect(() => {
     if (textRef.current) {
       setDimension({
-        width: textRef.current.offsetWidth,
-        height: textRef.current.offsetHeight,
+        width: textRef.current.offsetWidth + 10,
+        height: textRef.current.offsetHeight + 10,
       });
     }
   }, [textRef]);
@@ -43,41 +50,45 @@ export function TextComponent({
   }
 
   function handleResize(dimension: Dimension) {
-    console.log(dimension);
+    setDimension(dimension);
   }
 
   return (
-    <Box
+    <div
       id="text-container"
       style={{
         fontFamily: element.font.family,
         fontSize: element.font.size,
         letterSpacing: element.font.spacing,
-        lineHeight: element.font.height,
         position: "absolute",
         transform: `rotate(${element.rotation}deg)`,
         left: element.left,
         top: element.top,
         width: dimension.width,
         height: dimension.height,
+        cursor: contentEditable ? "text" : "grab",
       }}
+      onMouseDown={onSelect}
+      onDoubleClick={() => setContentEditable(true)}
+      ref={textContainerRef}
     >
-      <Moveable
-        onDrag={handleDrag}
-        onResize={handleResize}
-        onRotate={handleRotate}
-        onMouseDown={onSelect}
-        show={isSelected}
-        styleProps={{
-          width: dimension.width,
-          height: dimension.height,
-          top: element.top,
-          left: element.left,
-          rotation: element.rotation,
-        }}
-      >
-        <span ref={textRef}>{element.content}</span>
-      </Moveable>
-    </Box>
+      <span contentEditable={contentEditable} style={{ padding: 2 }} ref={textRef}>
+        {element.content}
+      </span>
+      {isSelected && !contentEditable && (
+        <Moveable
+          onDrag={handleDrag}
+          onResize={handleResize}
+          onRotate={handleRotate}
+          styleProps={{
+            width: dimension.width,
+            height: dimension.height,
+            top: element.top,
+            left: element.left,
+            rotation: element.rotation,
+          }}
+        />
+      )}
+    </div>
   );
 }

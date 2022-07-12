@@ -1,14 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import { useEventListener } from "hooks";
-import React, {
-  useRef,
-  useState,
-  MouseEvent as ReactMouseEvent,
-  useCallback,
-  RefObject,
-  ReactNode,
-  cloneElement,
-} from "react";
+import { useRef, useState, MouseEvent as ReactMouseEvent, useCallback, RefObject } from "react";
 import { Rotate } from "tabler-icons-react";
 
 type Status =
@@ -23,11 +15,8 @@ export type Position = { x: number; y: number };
 export type Dimension = { width: number; height: number };
 type MoveableProps = {
   onDrag: (p: Position) => void;
-  children: JSX.Element;
-  onMouseDown: () => void;
   onRotate: (r: number) => void;
   onResize: (d: Dimension) => void;
-  show: boolean;
   styleProps: {
     height: number;
     width: number;
@@ -38,12 +27,9 @@ type MoveableProps = {
 };
 
 export function Moveable({
-  show,
   onDrag,
-  onMouseDown,
   onResize,
   onRotate,
-  children,
   styleProps: { rotation, ...styles },
 }: MoveableProps) {
   const documentRef = useRef<Document>(document);
@@ -137,11 +123,9 @@ export function Moveable({
   useEventListener("mouseup", handleMouseUp);
   useEventListener("mousemove", handleMouseMove, documentRef, [status, ref]);
 
-  if (!show) return <span onMouseDown={onMouseDown}>{children}</span>;
-
   return (
-    <Box
-      sx={{
+    <div
+      style={{
         position: "absolute",
         left: 0,
         top: 0,
@@ -149,104 +133,85 @@ export function Moveable({
         right: 0,
       }}
       id="moveable"
-      as="span"
       onMouseDown={handleDragMouseDown}
       ref={ref}
     >
-      {React.Children.map(children, (child, i) =>
-        cloneElement(child, {
-          key: i,
-          style: {
-            position: "absolute",
-            left: 0,
-            top: 0,
-            bottom: 0,
-            right: 0,
-          },
-        })
-      )}
-      <Box
-        as="span"
-        sx={{
+      <div
+        style={{
           position: "absolute",
-          border: "2px solid",
-          borderColor: "blue.400",
+          border: "2px solid #0f65d6",
           top: 0,
           left: 0,
           bottom: 0,
           right: 0,
-          transform: "scale(1.20)",
+          transform: "scale(1.10)",
         }}
       >
-        <Box
+        <div
           onMouseDown={handleRotateMouseDown}
-          as="span"
-          sx={{
+          style={{
             left: "50%",
             transform: "translateX(-50%)",
             top: "-40px",
             position: "absolute",
-            backgroundColor: "gray.100",
+            backgroundColor: "#f7f3f2",
             borderRadius: "100%",
-            border: "1px solid",
-            borderColor: "gray.400",
+            border: "1px solid black",
             boxShadow: "1px 1px 2px rgba(0,0,0,0.4)",
             padding: 0.5,
           }}
         >
           <Rotate size={14} />
-        </Box>
-        <Box
-          as="span"
+        </div>
+        <span
           onMouseDown={(e) => handleResizeMouseDown(e, "resizing-tr")}
-          sx={{
+          style={{
             top: 0,
+            position: "absolute",
             right: 0,
             transform: "translate(50%,-50%)",
             ...resizeHandleStyles,
           }}
         />
-        <Box
-          as="span"
+        <span
           onMouseDown={(e) => handleResizeMouseDown(e, "resizing-bl")}
-          sx={{
+          style={{
             bottom: 0,
+            position: "absolute",
             left: 0,
             transform: "translate(-50%,50%)",
             ...resizeHandleStyles,
           }}
         />
-        <Box
-          as="span"
+        <span
           onMouseDown={(e) => handleResizeMouseDown(e, "resizing-br")}
-          sx={{
+          style={{
             bottom: 0,
+            position: "absolute",
             right: 0,
             transform: "translate(50%,50%)",
             ...resizeHandleStyles,
           }}
         />
-        <Box
-          as="span"
+        <div
           onMouseDown={(e) => handleResizeMouseDown(e, "resizing-tl")}
-          sx={{
+          style={{
+            position: "absolute",
             top: 0,
             left: 0,
             transform: "translate(-50%,-50%)",
             ...resizeHandleStyles,
           }}
         />
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 }
 
 const resizeHandleStyles = {
-  position: "absolute",
-  backgroundColor: "gray.100",
+  backgroundColor: "#f7f3f2",
   borderRadius: "100%",
-  border: "1px solid",
-  borderColor: "gray.500",
+  border: "1px solid gray",
   boxShadow: "1px 1px 2px rgba(0,0,0,0.4)",
   width: 15,
   height: 15,
