@@ -16,7 +16,7 @@ import {
 export function Toolbar() {
   const [selectedItems, setSelectedItems] = useRecoilState(selectedElementIdsState);
   const setElementsState = useSetRecoilState(elementsState);
-  // const [canvas, setCanvas] = useRecoilState(canvasState);
+  const [canvas, setCanvas] = useRecoilState(canvasState);
 
   // console.log("canvas ", canvas);
 
@@ -25,17 +25,17 @@ export function Toolbar() {
     setSelectedItems([]);
   }
 
-  // function handleSaveTemplate() {
-  //   localStorage.setItem("random_canvas", JSON.stringify(canvas));
-  // }
+  function handleSaveTemplate() {
+    localStorage.setItem("random_canvas", JSON.stringify(canvas));
+  }
 
-  // function handleGetTemplate() {
-  //   const jsonCanvasItem = localStorage.getItem("random_canvas");
+  function handleGetTemplate() {
+    const jsonCanvasItem = localStorage.getItem("random_canvas");
 
-  //   if (jsonCanvasItem) {
-  //     setCanvas(JSON.parse(jsonCanvasItem));
-  //   }
-  // }
+    if (jsonCanvasItem) {
+      setCanvas(JSON.parse(jsonCanvasItem));
+    }
+  }
 
   return (
     <Flex alignItems="center" p={2}>
@@ -62,7 +62,7 @@ export function Toolbar() {
       <Box flex={1} />
       <Stack direction="row" divider={<StackDivider borderColor="gray.400" />}>
         <Button
-          // onClick={handleGetTemplate}
+          onClick={handleGetTemplate}
           size="xs"
           leftIcon={<Template />}
           color="gray.500"
@@ -71,7 +71,7 @@ export function Toolbar() {
           Get Template
         </Button>
         <Button
-          // onClick={handleSaveTemplate}
+          onClick={handleSaveTemplate}
           size="xs"
           variant="ghost"
           leftIcon={<FileDatabase />}

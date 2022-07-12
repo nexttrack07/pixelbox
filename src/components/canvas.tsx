@@ -1,4 +1,4 @@
-import { Box, Fade, Slide } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { elementsState, selectedElementIdsState } from "stores/element.store";
 import { Element } from "components";
@@ -12,8 +12,8 @@ export function Canvas() {
     <Box
       position="relative"
       bg="white"
-      h="550px"
-      w="700px"
+      h="750px"
+      w="900px"
       onClick={(e) => {
         if (e.currentTarget === e.target) {
           setSelectedElement([]);

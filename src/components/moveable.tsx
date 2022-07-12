@@ -1,6 +1,14 @@
 import { Box } from "@chakra-ui/react";
 import { useEventListener } from "hooks";
-import { useRef, useState, MouseEvent as ReactMouseEvent, useCallback, RefObject } from "react";
+import React, {
+  useRef,
+  useState,
+  MouseEvent as ReactMouseEvent,
+  useCallback,
+  RefObject,
+  ReactNode,
+  cloneElement,
+} from "react";
 import { Rotate } from "tabler-icons-react";
 
 type Status =
@@ -84,8 +92,8 @@ export function Moveable({
       let x = styles.left - newX;
       let y = styles.top - newY;
 
-      x = Math.min(Math.max(0, x), 700 - styles.width);
-      y = Math.min(Math.max(0, y), 550 - styles.height);
+      x = Math.min(Math.max(0, x), 900 - styles.width);
+      y = Math.min(Math.max(0, y), 750 - styles.height);
 
       onDrag({ x, y });
       setMouse({ x: e.clientX, y: e.clientY });
@@ -129,33 +137,36 @@ export function Moveable({
   useEventListener("mouseup", handleMouseUp);
   useEventListener("mousemove", handleMouseMove, documentRef, [status, ref]);
 
-  if (!show)
-    return (
-      <div
-        style={{
-          position: "absolute",
-          transform: `rotate(${rotation}deg)`,
-          ...styles,
-        }}
-        onMouseDown={onMouseDown}
-      >
-        {children}
-      </div>
-    );
+  if (!show) return <span onMouseDown={onMouseDown}>{children}</span>;
 
   return (
     <Box
-      onMouseDown={handleDragMouseDown}
-      onDoubleClick={() => {}}
-      ref={ref}
-      style={{
+      sx={{
         position: "absolute",
-        transform: `rotate(${rotation}deg)`,
-        ...styles,
+        left: 0,
+        top: 0,
+        bottom: 0,
+        right: 0,
       }}
+      id="moveable"
+      as="span"
+      onMouseDown={handleDragMouseDown}
+      ref={ref}
     >
-      {children}
+      {React.Children.map(children, (child, i) =>
+        cloneElement(child, {
+          key: i,
+          style: {
+            position: "absolute",
+            left: 0,
+            top: 0,
+            bottom: 0,
+            right: 0,
+          },
+        })
+      )}
       <Box
+        as="span"
         sx={{
           position: "absolute",
           border: "2px solid",
@@ -169,6 +180,7 @@ export function Moveable({
       >
         <Box
           onMouseDown={handleRotateMouseDown}
+          as="span"
           sx={{
             left: "50%",
             transform: "translateX(-50%)",
@@ -185,6 +197,7 @@ export function Moveable({
           <Rotate size={14} />
         </Box>
         <Box
+          as="span"
           onMouseDown={(e) => handleResizeMouseDown(e, "resizing-tr")}
           sx={{
             top: 0,
@@ -194,6 +207,7 @@ export function Moveable({
           }}
         />
         <Box
+          as="span"
           onMouseDown={(e) => handleResizeMouseDown(e, "resizing-bl")}
           sx={{
             bottom: 0,
@@ -203,6 +217,7 @@ export function Moveable({
           }}
         />
         <Box
+          as="span"
           onMouseDown={(e) => handleResizeMouseDown(e, "resizing-br")}
           sx={{
             bottom: 0,
@@ -212,6 +227,7 @@ export function Moveable({
           }}
         />
         <Box
+          as="span"
           onMouseDown={(e) => handleResizeMouseDown(e, "resizing-tl")}
           sx={{
             top: 0,

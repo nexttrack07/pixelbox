@@ -6,9 +6,11 @@ import {
   elementState,
   ElementState,
   selectedElementType,
+  TextElement,
   TextState,
 } from "stores/element.store";
 import { GraphicsPanel } from "./graphics-panel";
+import { SelectedText } from "./selected-text";
 import { SidebarItemState, sidebarState } from "./sidebar";
 
 const sidepanelMap: Record<SidebarItemState, JSX.Element> = {
@@ -22,7 +24,7 @@ const selectedPanelMap: Record<ElementState["type"], JSX.Element> = {
   rectangle: <div>Rectangle selected</div>,
   image: <div>Image selected</div>,
   svg: <div>Svg selected</div>,
-  text: <div>Text selected</div>,
+  text: <SelectedText />,
 };
 
 export function Sidepanel() {
@@ -61,19 +63,20 @@ function TextPanel() {
   const lastIndex = useRecoilValue(elementsLength);
   const setElementState = useSetRecoilState(elementState(lastIndex));
 
-  function handleAddText(textElement: TextState) {
+  function handleAddText(textElement: TextElement) {
     setElements((elements) => [...elements, elements.length]);
-    setElementState({
-      ...textElement,
-      style: defaultStyle,
-    });
+    setElementState(textElement);
   }
   return (
     <VStack spacing={6} divider={<StackDivider borderColor="gray.500" />} alignItems="center">
       <Heading
         sx={{ cursor: "pointer" }}
         onClick={() => {
-          handleAddText(HeadingText);
+          handleAddText({
+            ...defaultText,
+            content: "Add a heading",
+            font: { ...defaultText.font, size: 32 },
+          });
         }}
       >
         Add a heading
@@ -81,7 +84,11 @@ function TextPanel() {
       <Heading
         sx={{ cursor: "pointer" }}
         onClick={() => {
-          handleAddText(SubHeadingText);
+          handleAddText({
+            ...defaultText,
+            content: "Add a subheading",
+            font: { ...defaultText.font, size: 26 },
+          });
         }}
         size="md"
       >
@@ -90,7 +97,7 @@ function TextPanel() {
       <Text
         sx={{ cursor: "pointer" }}
         onClick={() => {
-          handleAddText(ParagraphText);
+          handleAddText({ ...defaultText, content: "Add a paragrah" });
         }}
       >
         Add a paragraph
@@ -99,25 +106,17 @@ function TextPanel() {
   );
 }
 
-const TextCommon: Pick<TextState, "color" | "type"> = {
-  color: "black",
+const defaultText: TextElement = {
   type: "text",
-};
-
-const HeadingText: TextState = {
-  fontSize: 28,
-  content: "Add a heading",
-  ...TextCommon,
-};
-
-const SubHeadingText: TextState = {
-  fontSize: 20,
-  content: "Add a subheading",
-  ...TextCommon,
-};
-
-const ParagraphText: TextState = {
-  fontSize: 16,
-  content: "Add a paragraph",
-  ...TextCommon,
+  left: 100,
+  top: 100,
+  rotation: 0,
+  content: "Add some content",
+  font: {
+    size: 16,
+    spacing: 1,
+    height: 10,
+    style: "normal",
+    family: "Roboto",
+  },
 };

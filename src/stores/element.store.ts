@@ -5,7 +5,7 @@ export const elementsState = atom<number[]>({
   default: [],
 });
 
-export type CommonState = {
+export interface CommonState {
   style: {
     top: number;
     left: number;
@@ -13,7 +13,7 @@ export type CommonState = {
     height: number;
     rotation: number;
   };
-};
+}
 
 export type RectangleState = {
   type: "rectangle";
@@ -40,6 +40,39 @@ export type TextState = {
 
 export type ElementState = CommonState & (RectangleState | ImageState | SvgState | TextState);
 
+interface BaseElement {
+  top: number;
+  left: number;
+  rotation: number;
+  width: number;
+  height: number;
+}
+
+export interface RectangleElement extends BaseElement {
+  type: "rectangle";
+  backgroundColor: string;
+}
+
+export interface TextElement extends Omit<BaseElement, "width" | "height"> {
+  type: "text";
+  content: string;
+  font: {
+    size: number;
+    family: string;
+    spacing: number;
+    height: number;
+    style: string;
+  };
+}
+
+export interface SvgElement extends BaseElement {
+  type: "svg";
+  html: string;
+  src: string;
+}
+
+export type Element = RectangleElement | TextElement | SvgElement;
+
 export const defaultStyle = {
   top: 20,
   left: 20,
@@ -48,12 +81,12 @@ export const defaultStyle = {
   rotation: 0,
 };
 
-export const elementState = atomFamily<ElementState, number>({
+export const elementState = atomFamily<Element, number>({
   key: "element",
   default: () => ({
     type: "rectangle",
-    style: defaultStyle,
-    color: "#2345f4",
+    backgroundColor: "#2345f4",
+    ...defaultStyle,
   }),
 });
 
@@ -68,7 +101,7 @@ export const selectedElementIdsState = atom<number[]>({
 /**
  * A selector that returns the selected Element's state.
  */
-export const selectedElementState = selector<ElementState | undefined>({
+export const selectedElementState = selector<Element | undefined>({
   key: "selectedElement",
   get: ({ get }) => {
     const ids = get(selectedElementIdsState);
@@ -111,12 +144,12 @@ export const isSelectedState = selectorFamily({
     },
 });
 
-export const canvasState = selector<ElementState[]>({
+export const canvasState = selector<Element[]>({
   key: "canvasState",
   get: ({ get }) => {
     const elementIds = get(elementsState);
 
-    let items: ElementState[] = [];
+    let items: Element[] = [];
     elementIds.forEach((id) => {
       const itemState = get(elementState(id));
       items.push(itemState);
