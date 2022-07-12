@@ -131,6 +131,7 @@ export function Moveable({
         top: 0,
         bottom: 0,
         right: 0,
+        userSelect: "none",
       }}
       id="moveable"
       onMouseDown={handleDragMouseDown}
@@ -169,6 +170,7 @@ export function Moveable({
             top: 0,
             position: "absolute",
             right: 0,
+            cursor: "ne-resize",
             transform: "translate(50%,-50%)",
             ...resizeHandleStyles,
           }}
@@ -178,6 +180,7 @@ export function Moveable({
           style={{
             bottom: 0,
             position: "absolute",
+            cursor: "sw-resize",
             left: 0,
             transform: "translate(-50%,50%)",
             ...resizeHandleStyles,
@@ -188,6 +191,7 @@ export function Moveable({
           style={{
             bottom: 0,
             position: "absolute",
+            cursor: "se-resize",
             right: 0,
             transform: "translate(50%,50%)",
             ...resizeHandleStyles,
@@ -197,6 +201,7 @@ export function Moveable({
           onMouseDown={(e) => handleResizeMouseDown(e, "resizing-tl")}
           style={{
             position: "absolute",
+            cursor: "nw-resize",
             top: 0,
             left: 0,
             transform: "translate(-50%,-50%)",

@@ -66,13 +66,25 @@ export function TextComponent({
         top: element.top,
         width: dimension.width,
         height: dimension.height,
-        cursor: contentEditable ? "text" : "grab",
+        cursor: isSelected ? (contentEditable ? "text" : "move") : "pointer",
       }}
       onMouseDown={onSelect}
       onDoubleClick={() => setContentEditable(true)}
       ref={textContainerRef}
     >
-      <span contentEditable={contentEditable} style={{ padding: 2 }} ref={textRef}>
+      <span
+        suppressContentEditableWarning
+        contentEditable={contentEditable}
+        style={{ padding: 2 }}
+        ref={textRef}
+        onKeyUp={(e) => {
+          console.log(e.currentTarget.textContent);
+          setElement((el) => ({
+            ...el,
+            content: e.currentTarget.textContent || "",
+          }));
+        }}
+      >
         {element.content}
       </span>
       {isSelected && !contentEditable && (
