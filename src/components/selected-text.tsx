@@ -11,6 +11,10 @@ import {
   Slider,
   SliderTrack,
   SliderThumb,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
   SliderFilledTrack,
   IconButton,
   Button,
@@ -20,7 +24,7 @@ import {
 } from "@chakra-ui/react";
 import { selector, useRecoilValue, useSetRecoilState } from "recoil";
 import { selectedElementState, TextElement, Element } from "stores/element.store";
-import { Bold, Italic, Strikethrough, Underline } from "tabler-icons-react";
+import { Bold, Italic, Strikethrough, Underline, ChevronDown } from "tabler-icons-react";
 
 const fonts = ["Roboto", "Helvetica", "Oswald", "Nunito", "Times New Roman", "Arial", "Comic sans"];
 
@@ -49,14 +53,45 @@ export function SelectedText() {
       <Text fontWeight="semibold" fontSize="lg">
         Font
       </Text>
-      <HStack>
-        <Select defaultValue={fontAttrs?.family} borderColor="cyan.700" variant="outline">
-          {fonts.map((font) => (
-            <option style={{ fontFamily: font }} key={font} value={font}>
-              {font}
-            </option>
-          ))}
-        </Select>
+      <HStack w="100%">
+        <Menu>
+          <MenuButton
+            variant="outline"
+            w="100%"
+            borderColor="cyan.800"
+            color="cyan.900"
+            as={Button}
+            rightIcon={<ChevronDown />}
+          >
+            {fontAttrs?.family}
+          </MenuButton>
+          <MenuList>
+            {fonts.map((font) => (
+              <MenuItem
+                onClick={() => {
+                  setSelected((el) => {
+                    if (isTextElement(el)) {
+                      return {
+                        ...el,
+                        font: {
+                          ...el.font,
+                          family: font,
+                        },
+                      };
+                    }
+
+                    return el;
+                  });
+                }}
+                style={{ fontFamily: font }}
+                key={font}
+                value={font}
+              >
+                {font}
+              </MenuItem>
+            ))}
+          </MenuList>
+        </Menu>
         <Button borderColor="cyan.700" color="cyan.900" size="md" variant="outline">
           Add Font
         </Button>
