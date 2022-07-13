@@ -4,6 +4,7 @@ import { elementState, isSelectedState, selectedElementIdsState } from "stores/e
 import { useShiftKeyPressed } from "hooks";
 import { TextContainer } from "./text-container";
 import { SvgContainer } from "./svg-container";
+import { ImageContainer } from "./image-container";
 
 type ElementProps = {
   id: number;
@@ -30,6 +31,8 @@ export function Element({ id }: ElementProps) {
       return <SvgContainer id={id} onSelect={handleSelectElement} element={element} />;
     } else if (element.type === "text") {
       return <TextContainer id={id} onSelect={handleSelectElement} element={element} />;
+    } else if (element.type === "image") {
+      return <ImageContainer id={id} onSelect={handleSelectElement} element={element} />;
     } else {
       return <Box>Type: {element.type}</Box>;
     }

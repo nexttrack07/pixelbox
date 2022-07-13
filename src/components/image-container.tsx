@@ -1,19 +1,20 @@
+import { Image } from "@chakra-ui/react";
 import { useSetDefaultDimensions } from "hooks";
 import { useSetRecoilState, useRecoilValue } from "recoil";
-import { Element, elementState, isSelectedState, SvgElement } from "stores/element.store";
+import { Element, elementState, ImageElement, isSelectedState } from "stores/element.store";
 import { Dimension, Moveable, Position } from "./moveable";
 
 type Props = {
   id: number;
-  element: SvgElement;
+  element: ImageElement;
   onSelect: VoidFunction;
 };
 
-function isSvgElement(element: Element): element is SvgElement {
-  return (element as SvgElement).src !== undefined;
+function isImageElement(element: Element): element is ImageElement {
+  return (element as ImageElement).src !== undefined;
 }
 
-export function SvgContainer({ id, element, onSelect }: Props) {
+export function ImageContainer({ id, element, onSelect }: Props) {
   const setElement = useSetRecoilState(elementState(id));
   const isSelected = useRecoilValue(isSelectedState(id));
   useSetDefaultDimensions(id);
@@ -35,7 +36,7 @@ export function SvgContainer({ id, element, onSelect }: Props) {
 
   function handleResize(dimension: Dimension) {
     setElement((el) => {
-      if (isSvgElement(el)) {
+      if (isImageElement(el)) {
         return {
           ...el,
           width: dimension.width,
@@ -49,7 +50,7 @@ export function SvgContainer({ id, element, onSelect }: Props) {
 
   return (
     <div
-      id="svg-container"
+      id="image-container"
       style={{
         position: "absolute",
         transform: `rotate(${element.rotation}deg)`,
@@ -61,7 +62,7 @@ export function SvgContainer({ id, element, onSelect }: Props) {
       }}
       onMouseDown={onSelect}
     >
-      <div dangerouslySetInnerHTML={{ __html: element.html }} />
+      <img src={element.src} />
       {isSelected && (
         <Moveable
           onDrag={handleDrag}

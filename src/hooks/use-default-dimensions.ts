@@ -21,18 +21,32 @@ const imageDimensionsState = selectorFamily({
   get:
     (id: number) =>
     ({ get }) => {
-      console.log("image dimensions");
       const src = get(imageSrcState(id));
-      if (!src) return null;
+      if (!src) return { width: 0, height: 0 };
 
       return getImageDimensions(src);
     },
 });
 
+function gcd(a: number, b: number): number {
+  return b == 0 ? a : gcd(b, a % b);
+}
+
+const WIDTH = 900;
+const HEIGHT = 750;
+
+function getLowerValue(val: number, min: number): number {
+  if (val <= min / 2) return val;
+
+  return getLowerValue(val / 2, min);
+}
+
 export const useSetDefaultDimensions = (id: number) => {
   const imageDimensions = useRecoilValue(imageDimensionsState(id));
-  const width = imageDimensions?.width;
-  const height = imageDimensions?.height;
+  let { width: w, height: h } = imageDimensions;
+
+  let width = getLowerValue(w, WIDTH);
+  let height = (width * h) / w;
 
   const setElement = useSetRecoilState(elementState(id));
 
@@ -42,11 +56,8 @@ export const useSetDefaultDimensions = (id: number) => {
     setElement((element) => {
       return {
         ...element,
-        style: {
-          ...element.style,
-          width,
-          height,
-        },
+        width,
+        height,
       };
     });
   }, [width, height, setElement]);
