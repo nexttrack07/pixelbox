@@ -113,7 +113,7 @@ export function SelectedText() {
             </>
           )}
         </Listbox>
-        <button className="btn btn-outline btn-sm">Add Font</button>
+        <button className="btn btn-outline btn-sm w-18 text-xs">Add Font</button>
       </div>
       <div className="flex items-center justify-between space-x-2">
         <div className="btn-group">
@@ -131,7 +131,7 @@ export function SelectedText() {
           </button>
         </div>
         <input
-          className="input input-sm input-bordered w-12"
+          className="input input-xs bg-transparent border border-gray-700 input-bordered w-12"
           type="number"
           onChange={(e) => {
             setSelectedElement((el) => {
