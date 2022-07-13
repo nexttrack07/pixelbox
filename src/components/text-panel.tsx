@@ -22,7 +22,7 @@ export function TextPanel() {
   return (
     <div className="flex flex-col space-y-4 text-center">
       <span
-        className="cursor-pointer text-2xl font-bold"
+        className="cursor-pointer text-4xl font-bold"
         onClick={() => {
           handleAddText({
             ...defaultText,

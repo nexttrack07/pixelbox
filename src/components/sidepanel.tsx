@@ -1,7 +1,8 @@
 import { Box, Fade } from "@chakra-ui/react";
 import { useRecoilValue } from "recoil";
-import { ElementState, selectedElementType } from "stores/element.store";
+import { Element, selectedElementType } from "stores/element.store";
 import { GraphicsPanel } from "./graphics-panel";
+import { PhotosPanel } from "./photos-panel";
 import { SelectedText } from "./selected-text";
 import { SidebarItemState, sidebarState } from "./sidebar";
 import { TextPanel } from "./text-panel";
@@ -9,11 +10,11 @@ import { TextPanel } from "./text-panel";
 const sidepanelMap: Record<SidebarItemState, JSX.Element> = {
   templates: <div>Templates</div>,
   graphics: <GraphicsPanel />,
-  photos: <div>Photos</div>,
+  photos: <PhotosPanel />,
   text: <TextPanel />,
 };
 
-const selectedPanelMap: Record<ElementState["type"], JSX.Element> = {
+const selectedPanelMap: Record<Element["type"], JSX.Element> = {
   rectangle: <div>Rectangle selected</div>,
   image: <div>Image selected</div>,
   svg: <div>Svg selected</div>,

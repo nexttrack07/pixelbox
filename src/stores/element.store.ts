@@ -5,41 +5,6 @@ export const elementsState = atom<number[]>({
   default: [],
 });
 
-export interface CommonState {
-  style: {
-    top: number;
-    left: number;
-    width: number;
-    height: number;
-    rotation: number;
-  };
-}
-
-export type RectangleState = {
-  type: "rectangle";
-  color: string;
-};
-
-export type SvgState = {
-  type: "svg";
-  html: string;
-  src: string;
-};
-
-export type ImageState = {
-  type: "image";
-  src: string;
-};
-
-export type TextState = {
-  type: "text";
-  content: string;
-  fontSize: number;
-  color: string;
-};
-
-export type ElementState = CommonState & (RectangleState | ImageState | SvgState | TextState);
-
 interface BaseElement {
   top: number;
   left: number;
@@ -71,7 +36,12 @@ export interface SvgElement extends BaseElement {
   src: string;
 }
 
-export type Element = RectangleElement | TextElement | SvgElement;
+export interface ImageElement extends BaseElement {
+  type: "image";
+  src: string;
+}
+
+export type Element = RectangleElement | TextElement | SvgElement | ImageElement;
 
 export const defaultStyle = {
   top: 20,
