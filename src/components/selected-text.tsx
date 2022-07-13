@@ -1,29 +1,9 @@
-import {
-  VStack,
-  NumberInput,
-  NumberInputField,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
-  NumberInputStepper,
-  Text,
-  HStack,
-  Slider,
-  SliderTrack,
-  SliderThumb,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  SliderFilledTrack,
-  IconButton,
-  Button,
-  ButtonGroup,
-  Flex,
-  Box,
-} from "@chakra-ui/react";
+import { Listbox, Transition } from "@headlessui/react";
+import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
+import { Fragment } from "react";
 import { selector, useRecoilValue, useSetRecoilState } from "recoil";
 import { selectedElementState, TextElement, Element } from "stores/element.store";
-import { Bold, Italic, Strikethrough, Underline, ChevronDown } from "tabler-icons-react";
+import { Bold, Italic, Strikethrough, Underline } from "tabler-icons-react";
 
 const fonts = ["Roboto", "Helvetica", "Oswald", "Nunito", "Times New Roman", "Arial", "Comic sans"];
 
@@ -44,107 +24,140 @@ const fontProps = selector({
   },
 });
 
-export function SelectedText() {
-  const setSelected = useSetRecoilState(selectedElementState);
-  const fontAttrs = useRecoilValue(fontProps);
-  return (
-    <VStack p={4} alignItems="flex-start" spacing={8}>
-      <Text fontWeight="semibold" fontSize="lg">
-        Font
-      </Text>
-      <HStack w="100%">
-        <Menu>
-          <MenuButton
-            variant="outline"
-            w="100%"
-            borderColor="cyan.800"
-            color="cyan.900"
-            as={Button}
-            rightIcon={<ChevronDown />}
-          >
-            {fontAttrs?.family}
-          </MenuButton>
-          <MenuList>
-            {fonts.map((font) => (
-              <MenuItem
-                onClick={() => {
-                  setSelected((el) => {
-                    if (isTextElement(el)) {
-                      return {
-                        ...el,
-                        font: {
-                          ...el.font,
-                          family: font,
-                        },
-                      };
-                    }
+function classNames(...classes: string[]) {
+  return classes.filter(Boolean).join(" ");
+}
 
-                    return el;
-                  });
-                }}
-                style={{ fontFamily: font }}
-                key={font}
-                value={font}
-              >
-                {font}
-              </MenuItem>
-            ))}
-          </MenuList>
-        </Menu>
-        <Button borderColor="cyan.700" color="cyan.900" size="md" variant="outline">
-          Add Font
-        </Button>
-      </HStack>
-      <Flex w="100%" justifyContent="space-between" alignItems={"center"}>
-        <ButtonGroup colorScheme="cyan" size="md" isAttached variant="outline">
-          <IconButton aria-label="bold" icon={<Bold />} />
-          <IconButton aria-label="italic" icon={<Italic />} />
-          <IconButton aria-label="underline" icon={<Underline />} />
-          <IconButton aria-label="strike" icon={<Strikethrough />} />
-        </ButtonGroup>
-        <NumberInput
-          onChange={(val) => {
-            setSelected((el) => {
+export function SelectedText() {
+  const setSelectedElement = useSetRecoilState(selectedElementState);
+  const fontAttrs = useRecoilValue(fontProps);
+
+  function handleSelectedFont(family: string) {
+    setSelectedElement((el) => {
+      if (isTextElement(el) && family) {
+        return {
+          ...el,
+          font: {
+            ...el.font,
+            family,
+          },
+        };
+      }
+
+      return el;
+    });
+  }
+
+  return (
+    <div className="flex flex-col space-y-4 p-4">
+      <span className="font-bold text-xl">Font</span>
+      <div className="flex items-center space-x-2 justify-between">
+        <Listbox value={fontAttrs?.family} onChange={handleSelectedFont}>
+          {({ open }) => (
+            <>
+              <div className="relative w-full">
+                <Listbox.Button className="btn btn-sm w-full btn-outline">
+                  <span className="block truncate">{fontAttrs?.family}</span>
+                  <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                    <SelectorIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                  </span>
+                </Listbox.Button>
+
+                <Transition
+                  show={open}
+                  as={Fragment}
+                  leave="transition ease-in duration-100"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0"
+                >
+                  <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                    {fonts.map((font) => (
+                      <Listbox.Option
+                        key={font}
+                        className={({ active }) =>
+                          classNames(
+                            active ? "text-white bg-indigo-600" : "text-gray-900",
+                            "cursor-default select-none relative py-2 pl-3 pr-9"
+                          )
+                        }
+                        value={font}
+                      >
+                        {({ selected, active }) => (
+                          <>
+                            <span
+                              className={classNames(
+                                selected ? "font-semibold" : "font-normal",
+                                "block truncate"
+                              )}
+                            >
+                              {font}
+                            </span>
+
+                            {selected ? (
+                              <span
+                                className={classNames(
+                                  active ? "text-white" : "text-indigo-600",
+                                  "absolute inset-y-0 right-0 flex items-center pr-4"
+                                )}
+                              >
+                                <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                              </span>
+                            ) : null}
+                          </>
+                        )}
+                      </Listbox.Option>
+                    ))}
+                  </Listbox.Options>
+                </Transition>
+              </div>
+            </>
+          )}
+        </Listbox>
+        <button className="btn btn-outline btn-sm">Add Font</button>
+      </div>
+      <div className="flex items-center justify-between space-x-2">
+        <div className="btn-group">
+          <button className="btn btn-xs btn-outline">
+            <Bold />
+          </button>
+          <button className="btn btn-xs btn-outline">
+            <Italic />
+          </button>
+          <button className="btn btn-xs btn-outline">
+            <Underline />
+          </button>
+          <button className="btn btn-xs btn-outline">
+            <Strikethrough />
+          </button>
+        </div>
+        <input
+          className="input input-sm input-bordered w-12"
+          type="number"
+          onChange={(e) => {
+            setSelectedElement((el) => {
               if (isTextElement(el)) {
                 return {
                   ...el,
                   font: {
                     ...el.font,
-                    size: parseInt(val),
+                    size: parseInt(e.target.value),
                   },
                 };
               }
               return el;
             });
           }}
-          maxW={20}
           defaultValue={fontAttrs?.size}
-        >
-          <NumberInputField borderColor="cyan.700" />
-          <NumberInputStepper>
-            <NumberIncrementStepper />
-            <NumberDecrementStepper />
-          </NumberInputStepper>
-        </NumberInput>
-      </Flex>
-      <Box w="100%">
-        <Text>Letter Spacing</Text>
-        <Slider colorScheme="cyan" aria-label="letter spacing" defaultValue={30}>
-          <SliderTrack bg="cyan.200">
-            <SliderFilledTrack />
-          </SliderTrack>
-          <SliderThumb />
-        </Slider>
-      </Box>
-      <Box w="100%">
-        <Text>Line Height</Text>
-        <Slider colorScheme="cyan" aria-label="letter spacing" defaultValue={30}>
-          <SliderTrack bg="cyan.200">
-            <SliderFilledTrack />
-          </SliderTrack>
-          <SliderThumb />
-        </Slider>
-      </Box>
-    </VStack>
+        />
+      </div>
+      <div className="w-full">
+        <span className="font-semibold text-sm">Letter Spacing</span>
+        <input type="range" min="0" max="100" className="range range-accent range-xs" />
+      </div>
+      <div className="w-full">
+        <span className="font-semibold text-sm">Line Height</span>
+        <input type="range" min="0" max="100" className="range range-accent range-xs" />
+      </div>
+    </div>
   );
 }
