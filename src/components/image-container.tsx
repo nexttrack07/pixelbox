@@ -62,7 +62,7 @@ export function ImageContainer({ id, element, onSelect }: Props) {
       }}
       onMouseDown={onSelect}
     >
-      <img src={element.src} />
+      <img className="mask mask-circle" src={element.src} />
       {isSelected && (
         <Moveable
           onDrag={handleDrag}
