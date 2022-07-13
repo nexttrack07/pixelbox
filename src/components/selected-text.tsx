@@ -7,7 +7,6 @@ import {
   NumberInputStepper,
   Text,
   HStack,
-  Select,
   Slider,
   SliderTrack,
   SliderThumb,
