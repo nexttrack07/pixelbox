@@ -4,7 +4,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { elementState, isSelectedState, TextElement } from "stores/element.store";
 import { Dimension, Moveable, Position } from "./moveable";
 
-export function TextComponent({
+export function TextContainer({
   id,
   element,
   onSelect,

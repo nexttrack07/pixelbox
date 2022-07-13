@@ -1,7 +1,7 @@
 import { SimpleGrid, Box, Image, Button } from "@chakra-ui/react";
 import svgs from "data.json";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { defaultStyle, elementsState, elementState } from "stores/element.store";
+import { elementsState, elementState } from "stores/element.store";
 
 export function GraphicsPanel() {
   const [elements, setElements] = useRecoilState(elementsState);
@@ -16,13 +16,11 @@ export function GraphicsPanel() {
       .then((html) => {
         setElementState({
           type: "svg",
-          style: {
-            top: 100,
-            left: 100,
-            height: 100,
-            width: 100,
-            rotation: 0,
-          },
+          top: 100,
+          left: 100,
+          height: 100,
+          width: 100,
+          rotation: 0,
           html,
           src: url,
         });

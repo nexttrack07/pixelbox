@@ -1,22 +1,19 @@
-import { useState } from "react";
 import { Box } from "@chakra-ui/react";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { elementState, isSelectedState, selectedElementIdsState } from "stores/element.store";
-import { useSetDefaultDimensions, useShiftKeyPressed } from "hooks";
-import { Dimension, Moveable, Position } from "./moveable";
-import { TextComponent } from "./text-component";
+import { useShiftKeyPressed } from "hooks";
+import { TextContainer } from "./text-container";
+import { SvgContainer } from "./svg-container";
 
 type ElementProps = {
   id: number;
 };
 
 export function Element({ id }: ElementProps) {
-  const [element, setElement] = useRecoilState(elementState(id));
+  const element = useRecoilValue(elementState(id));
   const setSelectedElement = useSetRecoilState(selectedElementIdsState);
   const isSelected = useRecoilValue(isSelectedState(id));
   const shiftKeyPressed = useShiftKeyPressed();
-  const [showHandlers, setShowHandlers] = useState(true);
-  useSetDefaultDimensions(id);
 
   function handleSelectElement() {
     setSelectedElement((ids) => {
@@ -30,9 +27,9 @@ export function Element({ id }: ElementProps) {
 
   function renderElement() {
     if (element.type === "svg") {
-      return <div dangerouslySetInnerHTML={{ __html: element.html }} />;
+      return <SvgContainer id={id} onSelect={handleSelectElement} element={element} />;
     } else if (element.type === "text") {
-      return <TextComponent id={id} onSelect={handleSelectElement} element={element} />;
+      return <TextContainer id={id} onSelect={handleSelectElement} element={element} />;
     } else {
       return <Box>Type: {element.type}</Box>;
     }
