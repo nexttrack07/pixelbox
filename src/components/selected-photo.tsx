@@ -1,4 +1,3 @@
-import { useDebounceEffect } from "hooks/use-debounce";
 import React from "react";
 import ReactCrop, { Crop, PixelCrop } from "react-image-crop";
 import { useRecoilState } from "recoil";
@@ -13,32 +12,34 @@ export function SelectedPhoto() {
   const [selectedElement, setSelectedElement] = useRecoilState(selectedElementState);
   const imgRef = React.useRef<HTMLImageElement>(null);
   const [crop, setCrop] = React.useState<Crop>();
+  const [circleCrop, setCircleCrop] = React.useState(false);
   const [completedCrop, setCompletedCrop] = React.useState<PixelCrop>();
 
   if (!isPhotoElement(selectedElement)) {
     return null;
   }
 
-  useDebounceEffect(
-    async () => {
-      if (completedCrop?.width && completedCrop?.height && imgRef.current) {
-        let url = await imgPreview(imgRef.current, completedCrop);
-        setSelectedElement((el) => {
-          console.log("..hialaskdf");
-          if (el) {
-            return {
-              ...el,
-              width: completedCrop.width,
-              height: completedCrop.height,
-              src: url,
-            };
-          }
-        });
-      }
-    },
-    100,
-    [completedCrop]
-  );
+  const handleSwitchCrop = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCircleCrop(e.target.checked);
+  };
+
+  const handleSaveCrop = async () => {
+    if (completedCrop?.width && completedCrop?.height && imgRef.current) {
+      let url = await imgPreview(imgRef.current, completedCrop);
+      setSelectedElement((el) => {
+        console.log("..hialaskdf");
+        if (el) {
+          return {
+            ...el,
+            width: completedCrop.width,
+            height: completedCrop.height,
+            src: url,
+            ...(circleCrop && { mask: "circle" }),
+          };
+        }
+      });
+    }
+  };
 
   return (
     <div className="flex flex-col space-y-4 p-4">
@@ -127,16 +128,17 @@ export function SelectedPhoto() {
           </label>
         </div>
       </div>
-      <label htmlFor="my-modal-4" className="btn bg-slate-800 modal-button">
+      <label htmlFor="crop-modal" className="btn bg-slate-800 modal-button">
         Crop Image
       </label>
 
-      <input type="checkbox" id="my-modal-4" className="modal-toggle" />
-      <label htmlFor="my-modal-4" className="modal cursor-pointer">
+      <input type="checkbox" id="crop-modal" className="modal-toggle" />
+      <label htmlFor="crop-modal" className="modal cursor-pointer">
         <label className="modal-box relative" htmlFor="">
           <ReactCrop
             crop={crop}
-            circularCrop={true}
+            aspect={circleCrop ? 1 : undefined}
+            circularCrop={circleCrop}
             onComplete={(c) => setCompletedCrop(c)}
             onChange={(c) => setCrop(c)}
           >
@@ -146,6 +148,20 @@ export function SelectedPhoto() {
               className={`w-[${selectedElement.width}px] h-[${selectedElement.height}px]`}
             />
           </ReactCrop>
+          <div className="flex items-center justify-evenly">
+            <label
+              onClick={handleSaveCrop}
+              htmlFor="crop-modal"
+              className="btn btn-success btn-outline btn-sm"
+            >
+              Save
+            </label>
+            <label className="swap">
+              <input checked={circleCrop} onChange={handleSwitchCrop} type="checkbox" />
+              <div className="swap-on btn btn-sm btn-primary btn-outline">Circle</div>
+              <div className="swap-off btn btn-sm btn-primary btn-outline">Rectangle</div>
+            </label>
+          </div>
         </label>
       </label>
     </div>

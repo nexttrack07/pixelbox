@@ -39,6 +39,7 @@ export interface SvgElement extends BaseElement {
 export interface ImageElement extends BaseElement {
   type: "image";
   src: string;
+  mask?: "circle";
 }
 
 export type Element = RectangleElement | TextElement | SvgElement | ImageElement;
