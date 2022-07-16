@@ -1,4 +1,3 @@
-import { Image } from "@chakra-ui/react";
 import { useSetDefaultDimensions } from "hooks";
 import { useSetRecoilState, useRecoilValue } from "recoil";
 import { Element, elementState, ImageElement, isSelectedState } from "stores/element.store";
