@@ -3,6 +3,7 @@ import { useRecoilValue } from "recoil";
 import { Element, selectedElementType } from "stores/element.store";
 import { GraphicsPanel } from "./graphics-panel";
 import { PhotosPanel } from "./photos-panel";
+import { SelectedPhoto } from "./selected-photo";
 import { SelectedText } from "./selected-text";
 import { SidebarItemState, sidebarState } from "./sidebar";
 import { TextPanel } from "./text-panel";
@@ -16,7 +17,7 @@ const sidepanelMap: Record<SidebarItemState, JSX.Element> = {
 
 const selectedPanelMap: Record<Element["type"], JSX.Element> = {
   rectangle: <div>Rectangle selected</div>,
-  image: <div>Image selected</div>,
+  image: <SelectedPhoto />,
   svg: <div>Svg selected</div>,
   text: <SelectedText />,
 };
