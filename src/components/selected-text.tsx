@@ -1,16 +1,36 @@
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
-import { Fragment } from "react";
+import React, { Fragment } from "react";
 import { selector, useRecoilValue, useSetRecoilState } from "recoil";
 import { selectedElementState, TextElement, Element } from "stores/element.store";
 import { Bold, Italic, Strikethrough, Underline } from "tabler-icons-react";
 
-const fonts = ["Roboto", "Helvetica", "Oswald", "Nunito", "Times New Roman", "Arial", "Comic sans"];
+const fonts = [
+  "Roboto",
+  "Helvetica",
+  "Oswald",
+  "Nunito",
+  "Times New Roman",
+  "Arial",
+  "Comic sans",
+];
 
 function isTextElement(element?: Element): element is TextElement {
   return (element as TextElement).content !== undefined;
 }
 
+const elementContentSelector = selector({
+  key: "elementContent",
+  get: ({ get }) => {
+    const selectedElement = get(selectedElementState);
+
+    if (isTextElement(selectedElement)) {
+      return selectedElement.content;
+    }
+
+    return "";
+  },
+});
 const fontProps = selector({
   key: "fontProps",
   get: ({ get }) => {
@@ -31,6 +51,20 @@ function classNames(...classes: string[]) {
 export function SelectedText() {
   const setSelectedElement = useSetRecoilState(selectedElementState);
   const fontAttrs = useRecoilValue(fontProps);
+  const elementContent = useRecoilValue(elementContentSelector);
+
+  function handleChangeContent(e: React.ChangeEvent<HTMLInputElement>) {
+    setSelectedElement((el) => {
+      if (isTextElement(el)) {
+        return {
+          ...el,
+          content: e.target.value,
+        };
+      }
+
+      return el;
+    });
+  }
 
   function handleSelectedFont(family: string) {
     setSelectedElement((el) => {
@@ -158,6 +192,11 @@ export function SelectedText() {
         <span className="font-semibold text-sm">Line Height</span>
         <input type="range" min="0" max="100" className="range range-accent range-xs" />
       </div>
+      <input
+        className="input input-primary"
+        value={elementContent}
+        onChange={handleChangeContent}
+      />
     </div>
   );
 }

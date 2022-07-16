@@ -128,7 +128,7 @@ export function SelectedPhoto() {
           </label>
         </div>
       </div>
-      <label htmlFor="crop-modal" className="btn bg-slate-800 modal-button">
+      <label htmlFor="crop-modal" className="btn btn-primary btn-outline modal-button">
         Crop Image
       </label>
 
