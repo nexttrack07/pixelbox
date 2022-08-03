@@ -1,6 +1,10 @@
 import { Box } from "@chakra-ui/react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { elementState, isSelectedState, selectedElementIdsState } from "stores/element.store";
+import {
+  elementState,
+  isSelectedState,
+  selectedElementIdsState,
+} from "stores/element.store";
 import { useShiftKeyPressed } from "hooks";
 import { TextContainer } from "./text-container";
 import { SvgContainer } from "./svg-container";
@@ -29,7 +33,7 @@ export function Element({ id }: ElementProps) {
   function renderElement() {
     if (element.type === "svg") {
       return <SvgContainer id={id} onSelect={handleSelectElement} element={element} />;
-    } else if (element.type === "text") {
+    } else if (element.type === "textBase" || element.type === "text") {
       return <TextContainer id={id} onSelect={handleSelectElement} element={element} />;
     } else if (element.type === "image") {
       return <ImageContainer id={id} onSelect={handleSelectElement} element={element} />;

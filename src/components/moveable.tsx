@@ -1,6 +1,11 @@
-import { Box } from "@chakra-ui/react";
 import { useEventListener } from "hooks";
-import { useRef, useState, MouseEvent as ReactMouseEvent, useCallback, RefObject } from "react";
+import {
+  useRef,
+  useState,
+  MouseEvent as ReactMouseEvent,
+  useCallback,
+  RefObject,
+} from "react";
 import { Rotate } from "tabler-icons-react";
 
 type Status =

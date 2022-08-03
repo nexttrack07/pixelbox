@@ -18,9 +18,25 @@ export interface RectangleElement extends BaseElement {
   backgroundColor: string;
 }
 
+export interface TextElementBase extends Omit<BaseElement, "width" | "height"> {
+  type: "textBase";
+  content: string;
+  height?: number;
+  width?: number;
+  font: {
+    size: number;
+    family: string;
+    spacing: number;
+    height: number;
+    style: string;
+  };
+}
+
 export interface TextElement extends Omit<BaseElement, "width" | "height"> {
   type: "text";
   content: string;
+  height?: number;
+  width?: number;
   font: {
     size: number;
     family: string;
@@ -42,7 +58,12 @@ export interface ImageElement extends BaseElement {
   mask?: "circle";
 }
 
-export type Element = RectangleElement | TextElement | SvgElement | ImageElement;
+export type Element =
+  | RectangleElement
+  | TextElementBase
+  | TextElement
+  | SvgElement
+  | ImageElement;
 
 export const defaultStyle = {
   top: 20,

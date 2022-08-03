@@ -1,5 +1,5 @@
 import { useSetRecoilState, useRecoilValue, selector } from "recoil";
-import { elementsState, elementState, TextElement } from "stores/element.store";
+import { elementsState, elementState, TextElementBase } from "stores/element.store";
 
 const elementsLength = selector({
   key: "elementsLength",
@@ -15,7 +15,7 @@ export function TextPanel() {
   const lastIndex = useRecoilValue(elementsLength);
   const setElementState = useSetRecoilState(elementState(lastIndex));
 
-  function handleAddText(textElement: TextElement) {
+  function handleAddText(textElement: TextElementBase) {
     setElements((elements) => [...elements, elements.length]);
     setElementState(textElement);
   }
@@ -59,8 +59,8 @@ export function TextPanel() {
   );
 }
 
-const defaultText: TextElement = {
-  type: "text",
+const defaultText: TextElementBase = {
+  type: "textBase",
   left: 100,
   top: 100,
   rotation: 0,

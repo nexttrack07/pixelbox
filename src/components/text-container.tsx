@@ -1,7 +1,11 @@
-import { useOutsideClick } from "@chakra-ui/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { elementState, isSelectedState, TextElement } from "stores/element.store";
+import {
+  elementState,
+  isSelectedState,
+  TextElement,
+  TextElementBase,
+} from "stores/element.store";
 import { Dimension, Moveable, Position } from "./moveable";
 
 export function TextContainer({
@@ -10,29 +14,33 @@ export function TextContainer({
   onSelect,
 }: {
   id: number;
-  element: TextElement;
+  element: TextElement | TextElementBase;
   onSelect: VoidFunction;
 }) {
   const setElement = useSetRecoilState(elementState(id));
   const isSelected = useRecoilValue(isSelectedState(id));
-  const [contentEditable, setContentEditable] = useState(false);
-  const [dimension, setDimension] = useState({ width: 500, height: 50 });
   const textRef = useRef<HTMLDivElement>(null);
   const textContainerRef = useRef<HTMLDivElement>(null);
 
-  useOutsideClick({
-    ref: textContainerRef,
-    handler: () => setContentEditable(false),
-  });
-
   useEffect(() => {
     if (textRef.current) {
-      setDimension({
-        width: textRef.current.offsetWidth + 10,
-        height: textRef.current.offsetHeight + 10,
+      const width = textRef.current.offsetWidth;
+      const height = textRef.current.offsetHeight;
+
+      setElement((el) => {
+        if (el.type === "textBase") {
+          return {
+            ...el,
+            type: "text",
+            width,
+            height,
+          };
+        }
+
+        return el;
       });
     }
-  }, [textRef]);
+  }, [textRef.current]);
 
   function handleDrag(pos: Position) {
     setElement((el) => ({
@@ -50,7 +58,12 @@ export function TextContainer({
   }
 
   function handleResize(dimension: Dimension) {
-    setDimension(dimension);
+    console.log("dimensions: ", dimension);
+    setElement((el) => ({
+      ...el,
+      width: dimension.width,
+      height: dimension.height,
+    }));
   }
 
   return (
@@ -64,19 +77,14 @@ export function TextContainer({
         transform: `rotate(${element.rotation}deg)`,
         left: element.left,
         top: element.top,
-        width: dimension.width,
-        height: dimension.height,
-        cursor: isSelected ? (contentEditable ? "text" : "move") : "pointer",
+        width: element.width,
+        height: element.height,
+        cursor: isSelected ? "move" : "pointer",
       }}
       onMouseDown={onSelect}
-      onDoubleClick={() => {
-        setContentEditable(true);
-      }}
       ref={textContainerRef}
     >
       <span
-        suppressContentEditableWarning
-        contentEditable={contentEditable}
         style={{ padding: 2 }}
         ref={textRef}
         onKeyUp={(e) => {
@@ -89,16 +97,16 @@ export function TextContainer({
       >
         {element.content}
       </span>
-      {isSelected && !contentEditable && (
+      {isSelected && element.height && element.width && (
         <Moveable
           onDrag={handleDrag}
           onResize={handleResize}
           onRotate={handleRotate}
           styleProps={{
-            width: dimension.width,
-            height: dimension.height,
             top: element.top,
             left: element.left,
+            height: element.height,
+            width: element.width,
             rotation: element.rotation,
           }}
         />
