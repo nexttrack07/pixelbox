@@ -83,21 +83,20 @@ export function SelectedText() {
     <div className="flex flex-col space-y-4 p-4">
       <span className="font-bold text-xl">Font</span>
       <div className="flex items-center space-x-2 justify-between">
-        <Dropdown renderFn={(val) => <span className="text-xs">{val}</span>} onChange={handleSelectedFont} value={fontAttrs?.family ?? ''} items={fonts} />
-        <button className="btn btn-outline btn-sm w-18 text-xs">Add Font</button>
+        <Dropdown renderFn={(val) => <span className="text-md">{val}</span>} onChange={handleSelectedFont} value={fontAttrs?.family ?? ''} items={fonts} />
       </div>
       <div className="flex items-center justify-between space-x-2">
         <div className="btn-group">
-          <button className="btn btn-xs btn-outline">
+          <button className="btn btn-outline">
             <Bold />
           </button>
-          <button className="btn btn-xs btn-outline">
+          <button className="btn btn-outline">
             <Italic />
           </button>
-          <button className="btn btn-xs btn-outline">
+          <button className="btn btn-outline">
             <Underline />
           </button>
-          <button className="btn btn-xs btn-outline">
+          <button className="btn btn-outline">
             <Strikethrough />
           </button>
         </div>
