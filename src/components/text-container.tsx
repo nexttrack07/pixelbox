@@ -8,6 +8,8 @@ import {
 } from "stores/element.store";
 import { Dimension, Moveable, Position } from "./moveable";
 
+const TEXT_PADDING = 10;
+
 export function TextContainer({
   id,
   element,
@@ -24,8 +26,8 @@ export function TextContainer({
 
   useEffect(() => {
     if (textRef.current) {
-      const width = textRef.current.offsetWidth;
-      const height = textRef.current.offsetHeight;
+      const width = textRef.current.offsetWidth + TEXT_PADDING;
+      const height = textRef.current.offsetHeight + TEXT_PADDING;
 
       setElement((el) => {
         if (el.type === "textBase") {
@@ -85,7 +87,6 @@ export function TextContainer({
       ref={textContainerRef}
     >
       <span
-        style={{ padding: 2 }}
         ref={textRef}
         onKeyUp={(e) => {
           console.log(e.currentTarget.textContent);
