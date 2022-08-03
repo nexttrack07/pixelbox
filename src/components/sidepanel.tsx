@@ -1,4 +1,3 @@
-import { Box, Fade } from "@chakra-ui/react";
 import { useRecoilValue } from "recoil";
 import { Element, selectedElementType } from "stores/element.store";
 import { GraphicsPanel } from "./graphics-panel";
@@ -20,6 +19,7 @@ const selectedPanelMap: Record<Element["type"], JSX.Element> = {
   image: <SelectedPhoto />,
   svg: <div>Svg selected</div>,
   text: <SelectedText />,
+  textBase: <SelectedText />,
 };
 
 export function Sidepanel() {
@@ -30,15 +30,11 @@ export function Sidepanel() {
     <>
       {sidepanelMap[sidebarValue]}
       {selectedElement && (
-        <Fade in={true}>
-          <Box
-            backgroundColor="gray.200"
-            position="absolute"
-            sx={{ top: 0, left: 0, right: 0, bottom: 0 }}
-          >
-            {selectedPanelMap[selectedElement]}
-          </Box>
-        </Fade>
+        <div
+          className="bg-base-200 absolute top-0 bottom-0 right-0 left-0"
+        >
+          {selectedPanelMap[selectedElement]}
+        </div>
       )}
     </>
   );

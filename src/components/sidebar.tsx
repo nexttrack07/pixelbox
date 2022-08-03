@@ -1,5 +1,4 @@
-import { atom, useRecoilState, useSetRecoilState } from "recoil";
-import { Center, IconButton, Stack, StackDivider } from "@chakra-ui/react";
+import { atom, useRecoilState } from "recoil";
 import { ChartInfographic, Photo, Template, TextResize } from "tabler-icons-react";
 
 const sidebarItems = [
@@ -20,25 +19,21 @@ export function Sidebar() {
   const [sidebar, setSidebar] = useRecoilState(sidebarState);
 
   return (
-    <Stack spacing={0} direction="column">
+    <div className="flex flex-col">
       {sidebarItems.map((item) => (
-        <Center
-          backgroundColor={sidebar === item.id ? "gray.200" : "gray.300"}
-          p={6}
+        <div
+          className={`p-6 flex items-center justify-center hover:bg-blue-900 border-b border-gray-600  ${sidebar === item.id ? "bg-base-200" : "bg-base-300"}`}
           key={item.id}
-          borderBottom="1px solid"
-          borderColor="gray.600"
         >
-          <IconButton
-            variant="unstyled"
-            color="gray.600"
-            size="xs"
+          <button
+            className="text-blue-100 btn-xs"
             aria-label={item.id}
-            icon={item.icon}
             onClick={() => setSidebar(item.id)}
-          />
-        </Center>
+          >
+            {item.icon}
+          </button>
+        </div>
       ))}
-    </Stack>
+    </div>
   );
 }

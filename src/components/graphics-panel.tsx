@@ -1,4 +1,3 @@
-import { SimpleGrid, Box, Image, Button } from "@chakra-ui/react";
 import svgs from "data.json";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { elementsState, elementState } from "stores/element.store";
@@ -29,18 +28,17 @@ export function GraphicsPanel() {
 
   return (
     <>
-      <SimpleGrid columns={3} spacing={4}>
+      <div className="flex space-x-2 space-y-2 flex-wrap p-4 justify-center">
         {svgs.data.map((item) => (
-          <Button
-            my={5}
+          <button
+            className="my-5 w-[75px]"
             key={item.id}
-            variant="unstyled"
             onClick={() => handleAddElement(item.url)}
           >
-            <Image src={item.url} id={item.id} alt={item.id} boxSize="75px" />
-          </Button>
+            <img src={item.url} id={item.id} alt={item.id} />
+          </button>
         ))}
-      </SimpleGrid>
+      </div>
     </>
   );
 }

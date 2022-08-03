@@ -1,4 +1,3 @@
-import { Box } from "@chakra-ui/react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import {
   elementState,
@@ -38,7 +37,7 @@ export function Element({ id }: ElementProps) {
     } else if (element.type === "image") {
       return <ImageContainer id={id} onSelect={handleSelectElement} element={element} />;
     } else {
-      return <Box>Type: {element.type}</Box>;
+      return <div>Type: {element.type}</div>;
     }
   }
 

@@ -4,5 +4,5 @@
 @tailwind utilities;
 
 .btn {
-  @apply rounded-sm;
+  @apply rounded;
 }

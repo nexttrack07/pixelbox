@@ -1,4 +1,3 @@
-import { Box } from "@chakra-ui/react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { elementsState, selectedElementIdsState } from "stores/element.store";
 import { Element } from "components";
@@ -9,11 +8,8 @@ export function Canvas() {
   const setSelectedElement = useSetRecoilState(selectedElementIdsState);
 
   return (
-    <Box
-      position="relative"
-      bg="white"
-      h="750px"
-      w="900px"
+    <div
+      className="relative bg-white h-[800px] w-[1000px]"
       onClick={(e) => {
         if (e.currentTarget === e.target) {
           setSelectedElement([]);
@@ -25,6 +21,6 @@ export function Canvas() {
           <Element id={element} />
         </Suspense>
       ))}
-    </Box>
+    </div>
   );
 }
