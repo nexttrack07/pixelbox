@@ -1,6 +1,7 @@
 import { useSetDefaultDimensions } from "hooks";
 import { useSetRecoilState, useRecoilValue } from "recoil";
 import { Element, elementState, isSelectedState, SvgElement } from "stores/element.store";
+import { SvgRenderer } from "./common/svg-renderer";
 import { Dimension, Moveable, Position } from "./moveable";
 
 type Props = {
@@ -10,7 +11,7 @@ type Props = {
 };
 
 function isSvgElement(element: Element): element is SvgElement {
-  return (element as SvgElement).src !== undefined;
+  return element.type === "svg"
 }
 
 export function SvgContainer({ id, element, onSelect }: Props) {
@@ -47,21 +48,23 @@ export function SvgContainer({ id, element, onSelect }: Props) {
     });
   }
 
+  const { type, top, left, height, width, rotation, ...svgProps } = element;
+
   return (
     <div
       id="svg-container"
       style={{
         position: "absolute",
-        transform: `rotate(${element.rotation}deg)`,
-        left: element.left,
-        top: element.top,
-        width: element.width,
-        height: element.height,
+        transform: `rotate(${rotation}deg)`,
+        left: left,
+        top: top,
+        width: width,
+        height: height,
         cursor: isSelected ? "move" : "pointer",
       }}
       onMouseDown={onSelect}
     >
-      <div dangerouslySetInnerHTML={{ __html: element.html }} />
+      <SvgRenderer svg={svgProps} />
       {isSelected && (
         <Moveable
           onDrag={handleDrag}

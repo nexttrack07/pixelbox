@@ -41,16 +41,19 @@ export interface TextElement extends Omit<TextElementBase, "type"> {
   width: number;
 }
 
-export interface SvgElement extends BaseElement {
-  type: "svg";
-  html: string;
-  src: string;
+export type Rect = {
+  element: "rect",
+  stroke?: string;
+  strokeWidth?: number;
+  fill?: string;
+  rx: number;
 }
+
+export type SvgElement = BaseElement & { type: "svg" } & Rect;
 
 export interface ImageElement extends BaseElement {
   type: "image";
   src: string;
-  mask?: "circle";
 }
 
 export type Element =
