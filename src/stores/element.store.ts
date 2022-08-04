@@ -41,15 +41,38 @@ export interface TextElement extends Omit<TextElementBase, "type"> {
   width: number;
 }
 
+export type SvgBase = {
+  type: "svg",
+  stroke?: string;
+  fill?: string;
+  strokeWidth?: number;
+} & BaseElement;
+
 export type Rect = {
   element: "rect",
-  stroke?: string;
-  strokeWidth?: number;
-  fill?: string;
-  rx: number;
-}
+  rx?: number;
+  width: number;
+  height: number;
+} & Omit<SvgBase, "width" | "height">
 
-export type SvgElement = BaseElement & { type: "svg" } & Rect;
+export type Circle = {
+  element: "circle";
+  r?: number;
+  width: number;
+  height: number;
+} & Omit<SvgBase, "width" | "height">
+
+export type Ellipse = {
+  element: "ellipse";
+  rx?: number;
+  ry?: number;
+  width: number;
+  height: number;
+} & Omit<SvgBase, "width" | "height">
+
+export type SvgType = Rect | Circle | Ellipse;
+
+export type SvgElement = { type: "svg" } & SvgType;
 
 export interface ImageElement extends BaseElement {
   type: "image";

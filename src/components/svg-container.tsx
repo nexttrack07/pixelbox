@@ -40,7 +40,7 @@ export function SvgContainer({ id, element, onSelect }: Props) {
         return {
           ...el,
           width: dimension.width,
-          height: (dimension.width * el.height) / el.width,
+          height: dimension.height
         };
       }
 
@@ -64,7 +64,7 @@ export function SvgContainer({ id, element, onSelect }: Props) {
       }}
       onMouseDown={onSelect}
     >
-      <SvgRenderer svg={svgProps} />
+      <SvgRenderer svg={element} />
       {isSelected && (
         <Moveable
           onDrag={handleDrag}
