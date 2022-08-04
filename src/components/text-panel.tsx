@@ -20,7 +20,7 @@ export function TextPanel() {
     setElementState(textElement);
   }
   return (
-    <div className="flex flex-col space-y-4 text-center">
+    <div className="py-8 flex flex-col space-y-4 text-center">
       <span
         className="cursor-pointer text-4xl font-bold"
         onClick={() => {
@@ -69,7 +69,10 @@ const defaultText: TextElementBase = {
     size: 16,
     spacing: 1,
     height: 10,
-    style: "normal",
+    bold: true,
+    color: "#000",
+    italic: false,
     family: "Roboto",
+    underline: false,
   },
 };

@@ -25,25 +25,20 @@ export interface TextElementBase extends Omit<BaseElement, "width" | "height"> {
   width?: number;
   font: {
     size: number;
+    italic: boolean;
+    color: string;
+    bold: boolean;
     family: string;
-    spacing: number;
     height: number;
-    style: string;
+    spacing: number;
+    underline: boolean;
   };
 }
 
-export interface TextElement extends Omit<BaseElement, "width" | "height"> {
+export interface TextElement extends Omit<TextElementBase, "type"> {
   type: "text";
-  content: string;
-  height?: number;
-  width?: number;
-  font: {
-    size: number;
-    family: string;
-    spacing: number;
-    height: number;
-    style: string;
-  };
+  height: number;
+  width: number;
 }
 
 export interface SvgElement extends BaseElement {
@@ -130,10 +125,10 @@ export const isSelectedState = selectorFamily({
   key: "isSelected",
   get:
     (id: number) =>
-    ({ get }) => {
-      const selectedElementIds = get(selectedElementIdsState);
-      return selectedElementIds.includes(id);
-    },
+      ({ get }) => {
+        const selectedElementIds = get(selectedElementIdsState);
+        return selectedElementIds.includes(id);
+      },
 });
 
 export const canvasState = selector<Element[]>({

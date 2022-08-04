@@ -87,17 +87,53 @@ export function SelectedText() {
       </div>
       <div className="flex items-center justify-between space-x-2">
         <div className="btn-group">
-          <button className="btn btn-outline">
+          <button onClick={() => {
+            setSelectedElement((el) => {
+              if (isTextElement(el)) {
+                return {
+                  ...el,
+                  font: {
+                    ...el.font,
+                    bold: !el.font.bold
+                  }
+                }
+              }
+              return el;
+            })
+          }} className={`btn btn-outline ${fontAttrs?.bold && "btn-active"}`}>
             <Bold />
           </button>
-          <button className="btn btn-outline">
+          <button onClick={() => {
+            setSelectedElement((el) => {
+              if (isTextElement(el)) {
+                return {
+                  ...el,
+                  font: {
+                    ...el.font,
+                    italic: !el.font.italic
+                  }
+                }
+              }
+              return el;
+            })
+          }} className={`btn btn-outline ${fontAttrs?.italic && "btn-active"}`}>
             <Italic />
           </button>
-          <button className="btn btn-outline">
+          <button onClick={() => {
+            setSelectedElement((el) => {
+              if (isTextElement(el)) {
+                return {
+                  ...el,
+                  font: {
+                    ...el.font,
+                    underline: !el.font.underline
+                  }
+                }
+              }
+              return el;
+            })
+          }} className={`btn btn-outline ${fontAttrs?.underline && "btn-active"}`}>
             <Underline />
-          </button>
-          <button className="btn btn-outline">
-            <Strikethrough />
           </button>
         </div>
         <input
