@@ -5,6 +5,7 @@ import { selector, useRecoilValue, useSetRecoilState } from "recoil";
 import { selectedElementState, TextElement, Element } from "stores/element.store";
 import { Bold, Italic, Strikethrough, Underline } from "tabler-icons-react";
 import { Dropdown } from "./common/dropdown";
+import { Slider } from "./slider";
 
 const fonts = [
   "Roboto",
@@ -82,9 +83,8 @@ export function SelectedText() {
   return (
     <div className="flex flex-col space-y-4 p-4">
       <span className="font-bold text-xl">Font</span>
-      <div className="flex items-center space-x-2 justify-between">
-        <Dropdown renderFn={(val) => <span className="text-md">{val}</span>} onChange={handleSelectedFont} value={fontAttrs?.family ?? ''} items={fonts} />
-      </div>
+      <Dropdown renderFn={(val) => <span className="text-md">{val}</span>} onChange={handleSelectedFont} value={fontAttrs?.family ?? ''} items={fonts} />
+      <Slider value={20} label="Font Size" />
       <div className="flex items-center justify-between space-x-2">
         <div className="btn-group">
           <button onClick={() => {
