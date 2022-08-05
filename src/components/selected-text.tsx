@@ -78,11 +78,27 @@ export function SelectedText() {
     });
   }
 
+  function handleFontChange(val: number) {
+    setSelectedElement((el) => {
+      if (isTextElement(el)) {
+        return {
+          ...el,
+          font: {
+            ...el.font,
+            size: val
+          },
+        };
+      }
+
+      return el;
+    });
+  }
+
   return (
     <div className="flex flex-col space-y-4 p-4">
       <span className="font-bold text-xl">Font</span>
       <Dropdown renderFn={(val) => <span className="text-md">{val}</span>} onChange={handleSelectedFont} value={fontAttrs?.family ?? ''} items={fonts} />
-      <Slider value={20} label="Font Size" />
+      <Slider onChange={handleFontChange} value={fontAttrs?.size || 20} label="Font Size" />
       <div className="flex items-center justify-between space-x-2">
         <div className="btn-group">
           <button onClick={() => {
