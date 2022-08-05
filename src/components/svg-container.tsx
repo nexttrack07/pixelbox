@@ -48,7 +48,7 @@ export function SvgContainer({ id, element, onSelect }: Props) {
     });
   }
 
-  const { type, top, left, height, width, rotation, ...svgProps } = element;
+  const { top, left, height, width, rotation } = element;
 
   return (
     <div
