@@ -1,9 +1,7 @@
-import { Listbox, Transition } from "@headlessui/react";
-import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
-import React, { Fragment } from "react";
+import React from "react";
 import { selector, useRecoilValue, useSetRecoilState } from "recoil";
 import { selectedElementState, TextElement, Element } from "stores/element.store";
-import { Bold, Italic, Strikethrough, Underline } from "tabler-icons-react";
+import { Bold, Italic, Underline } from "tabler-icons-react";
 import { Dropdown } from "./common/dropdown";
 import { Slider } from "./slider";
 
