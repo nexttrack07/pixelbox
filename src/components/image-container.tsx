@@ -52,6 +52,8 @@ export function ImageContainer({ id, element, onSelect }: Props) {
     });
   }
 
+  console.log("mask: ", element.mask)
+
   return (
     <div
       id="image-container"
@@ -68,6 +70,7 @@ export function ImageContainer({ id, element, onSelect }: Props) {
     >
       <img
         className={element.mask ? `mask mask-${element.mask}` : ""}
+        // className="mask mask-circle"
         src={element.src}
       />
       {isSelected && (

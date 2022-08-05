@@ -1,4 +1,4 @@
-import { ReactNode, SVGProps } from "react";
+import { SVGProps } from "react";
 import { SvgType } from "stores/element.store";
 
 type Props = {

@@ -77,6 +77,7 @@ export type SvgElement = { type: "svg" } & SvgType;
 export interface ImageElement extends BaseElement {
   type: "image";
   src: string;
+  mask: "circle" | "squircle" | "hexagon" | "diamond";
 }
 
 export type Element =
