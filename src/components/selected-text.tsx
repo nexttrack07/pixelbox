@@ -150,33 +150,6 @@ export function SelectedText() {
             <Underline />
           </button>
         </div>
-        <input
-          className="input input-xs bg-transparent border border-gray-700 input-bordered w-12"
-          type="number"
-          onChange={(e) => {
-            setSelectedElement((el) => {
-              if (isTextElement(el)) {
-                return {
-                  ...el,
-                  font: {
-                    ...el.font,
-                    size: parseInt(e.target.value),
-                  },
-                };
-              }
-              return el;
-            });
-          }}
-          defaultValue={fontAttrs?.size}
-        />
-      </div>
-      <div className="w-full">
-        <span className="font-semibold text-sm">Letter Spacing</span>
-        <input type="range" min="0" max="100" className="range range-accent range-xs" />
-      </div>
-      <div className="w-full">
-        <span className="font-semibold text-sm">Line Height</span>
-        <input type="range" min="0" max="100" className="range range-accent range-xs" />
       </div>
       <input
         className="input input-primary"
