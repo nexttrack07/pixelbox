@@ -37,7 +37,6 @@ export function SelectedPhoto() {
   function handleAddMask() {
     setSelectedElement((el) => {
       if (isPhotoElement(el)) {
-        console.log('mask circle')
         return {
           ...el,
           mask: "circle"
