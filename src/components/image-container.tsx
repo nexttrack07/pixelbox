@@ -1,4 +1,5 @@
 import { useSetDefaultDimensions } from "hooks";
+import { forwardRef } from "react";
 import { ImageElement } from "stores/element.store";
 
 type Props = {
@@ -7,7 +8,7 @@ type Props = {
   onSelect: (e: React.MouseEvent) => void;
 };
 
-export function ImageContainer({ id, element, onSelect }: Props) {
+export const ImageContainer = forwardRef<HTMLDivElement, Props>(({ id, element, onSelect }, ref) => {
   useSetDefaultDimensions(id);
 
   return (
@@ -22,7 +23,8 @@ export function ImageContainer({ id, element, onSelect }: Props) {
         height: element.height,
         cursor: "pointer",
       }}
-      onMouseDown={onSelect}
+      onClick={onSelect}
+      ref={ref}
     >
       <img
         className={element.mask ? `mask mask-${element.mask}` : ""}
@@ -32,3 +34,4 @@ export function ImageContainer({ id, element, onSelect }: Props) {
     </div>
   );
 }
+)

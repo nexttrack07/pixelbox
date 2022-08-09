@@ -21,14 +21,7 @@ export function Element({ id }: ElementProps) {
   const shiftKeyPressed = useShiftKeyPressed();
   const ref = useRef<HTMLDivElement>(null);
 
-  function handleClickOutside() {
-    setSelectedElement((ids) => ids.filter(i => i !== id))
-  }
-
-  // useClickOutside(ref, handleClickOutside);
-
   function handleSelectElement(e: React.MouseEvent) {
-    console.log("element clicked")
     e.stopPropagation();
     setSelectedElement((ids) => {
       if (isSelected) return ids;
@@ -46,9 +39,9 @@ export function Element({ id }: ElementProps) {
     if (element.type === "svg") {
       return <SvgContainer ref={ref} id={id} onSelect={handleSelectElement} element={element} />;
     } else if (element.type === "textBase" || element.type === "text") {
-      return <TextContainer id={id} onSelect={handleSelectElement} element={element} />;
+      return <TextContainer ref={ref} id={id} onSelect={handleSelectElement} element={element} />;
     } else if (element.type === "image") {
-      return <ImageContainer id={id} onSelect={handleSelectElement} element={element} />;
+      return <ImageContainer ref={ref} id={id} onSelect={handleSelectElement} element={element} />;
     } else {
       return <div>Type: {element.type}</div>;
     }

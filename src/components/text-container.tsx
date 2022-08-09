@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import React, { forwardRef, useEffect, useRef } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   elementState,
@@ -8,18 +8,19 @@ import {
 
 const TEXT_PADDING = 10;
 
-export function TextContainer({
-  id,
-  element,
-  onSelect,
-}: {
+type Props = {
   id: number;
   element: TextElement | TextElementBase;
   onSelect: (e: React.MouseEvent) => void;
-}) {
+}
+
+export const TextContainer = forwardRef<HTMLDivElement, Props>(({
+  id,
+  element,
+  onSelect,
+}, ref) => {
   const setElement = useSetRecoilState(elementState(id));
   const textRef = useRef<HTMLDivElement>(null);
-  const textContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (textRef.current) {
@@ -41,6 +42,11 @@ export function TextContainer({
     }
   }, [textRef.current]);
 
+  function handleMouseDown(e: React.MouseEvent) {
+    e.stopPropagation();
+    onSelect(e);
+  }
+
 
   return (
     <div
@@ -61,8 +67,8 @@ export function TextContainer({
         height: element.height,
         cursor: "pointer",
       }}
-      onMouseDown={onSelect}
-      ref={textContainerRef}
+      onClick={handleMouseDown}
+      ref={ref}
     >
       <span
         ref={textRef}
@@ -78,4 +84,4 @@ export function TextContainer({
       </span>
     </div>
   );
-}
+})

@@ -73,16 +73,11 @@ export function Moveable({
   const handleMouseMove = (e: MouseEvent) => {
     e.stopPropagation();
     if (status === "moving") {
-      if (!ref.current) return;
-
       onDrag({ x: e.movementX, y: e.movementY });
     } else if (status === "rotating") {
-      if (!ref.current) return;
       const r = getDegrees(e.clientX, e.clientY, ref);
       onRotate(r);
     } else if (status === "resizing-br") {
-      if (!ref.current) return;
-
       const width = e.movementX
       const height = e.movementY
 
@@ -116,7 +111,7 @@ export function Moveable({
 
 
   useEventListener("mouseup", handleMouseUp, documentRef);
-  useEventListener("mousemove", handleMouseMove, documentRef, [status, ref]);
+  useEventListener("mousemove", handleMouseMove, documentRef, [status]);
 
   return (
     <div
@@ -130,7 +125,6 @@ export function Moveable({
       }}
       id="moveable"
       onMouseDown={handleDragMouseDown}
-      ref={ref}
     >
       <div
         style={{
