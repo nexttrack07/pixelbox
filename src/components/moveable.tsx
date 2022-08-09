@@ -39,9 +39,7 @@ export function Moveable({
 }: MoveableProps) {
   const documentRef = useRef<Document>(document);
   const ref = useRef<HTMLDivElement>(null);
-  const brRef = useRef<HTMLSpanElement>(null);
   const [status, setStatus] = useState<Status>("idle");
-  const [mouse, setMouse] = useState({ x: 0, y: 0 });
 
   const handleMouseUp = useCallback((e: MouseEvent) => {
     e.stopPropagation();
@@ -51,7 +49,6 @@ export function Moveable({
   const handleDragMouseDown = useCallback((e: ReactMouseEvent) => {
     e.stopPropagation();
     setStatus("moving");
-    setMouse({ x: e.clientX, y: e.clientY });
   }, []);
 
   const handleRotateMouseDown = useCallback((e: ReactMouseEvent) => {
@@ -62,7 +59,6 @@ export function Moveable({
   const handleResizeMouseDown = (e: ReactMouseEvent, stat: Status) => {
     e.stopPropagation();
     setStatus(stat);
-    setMouse({ x: e.clientX, y: e.clientY });
   };
 
   function getDegrees(mouseX: number, mouseY: number, ref: RefObject<HTMLDivElement>) {
@@ -78,17 +74,8 @@ export function Moveable({
     e.stopPropagation();
     if (status === "moving") {
       if (!ref.current) return;
-      // const newX = mouse.x - e.clientX;
-      // const newY = mouse.y - e.clientY;
-
-      // let x = styles.left - newX;
-      // let y = styles.top - newY;
-
-      // x = Math.min(Math.max(0, x), 900 - styles.width);
-      // y = Math.min(Math.max(0, y), 750 - styles.height);
 
       onDrag({ x: e.movementX, y: e.movementY });
-      setMouse({ x: e.clientX, y: e.clientY });
     } else if (status === "rotating") {
       if (!ref.current) return;
       const r = getDegrees(e.clientX, e.clientY, ref);
@@ -148,12 +135,12 @@ export function Moveable({
       <div
         style={{
           position: "absolute",
-          border: "2px solid #0f65d6",
+          border: "2px dashed #0f65d6",
           top: 0,
           left: 0,
           bottom: 0,
           right: 0,
-          transform: "scale(1.10)",
+          transform: "scale(1.05)",
         }}
       >
         <div
