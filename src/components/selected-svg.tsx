@@ -1,4 +1,4 @@
-import { selector, useRecoilValue, useSetRecoilState } from "recoil";
+import { selector, selectorFamily, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   Element,
   selectedElementState,
@@ -11,27 +11,24 @@ function isSvgElement(element?: Element): element is SvgElement {
   return element?.type === "svg";
 }
 
-const svgPropsSelector = selector({
-  key: "svgProps",
-  get: ({ get }) => {
+const svgSelector = selectorFamily<any, keyof SvgElement>({
+  key: "svgSelector",
+  get: (prop) => ({ get }) => {
     const selectedElement = get(selectedElementState);
 
     if (isSvgElement(selectedElement)) {
-      const { fill, stroke, strokeWidth } = selectedElement;
-
-      return {
-        fill,
-        stroke,
-        strokeWidth,
-      };
+      const val = selectedElement[prop];
+      return val
     }
 
-    return;
-  },
-});
+    return null;
+  }
+})
 
 export function SelectedSvg() {
-  const svgProps = useRecoilValue(svgPropsSelector);
+  const fill = useRecoilValue(svgSelector("fill"));
+  const stroke = useRecoilValue(svgSelector("stroke"));
+  const strokeWidth = useRecoilValue(svgSelector("strokeWidth"));
   const setSelectedElement = useSetRecoilState(selectedElementState);
 
   function handleFillChange(color: ColorResult) {
@@ -84,12 +81,12 @@ export function SelectedSvg() {
             <label
               tabIndex={0}
               className="btn w-20 h-18"
-              style={{ backgroundColor: svgProps?.fill }}
+              style={{ backgroundColor: fill }}
             />
             <div tabIndex={0} className="dropdown-content">
               <BlockPicker
                 onChangeComplete={handleFillChange}
-                color={svgProps?.fill}
+                color={fill}
               />
             </div>
           </div>
@@ -100,12 +97,12 @@ export function SelectedSvg() {
             <label
               tabIndex={0}
               className="btn w-20 h-18"
-              style={{ backgroundColor: svgProps?.stroke }}
+              style={{ backgroundColor: stroke }}
             />
             <div tabIndex={0} className="dropdown-content">
               <BlockPicker
                 onChangeComplete={handleStrokeChange}
-                color={svgProps?.stroke}
+                color={stroke}
               />
             </div>
           </div>
@@ -114,7 +111,7 @@ export function SelectedSvg() {
       <Slider
         max={10}
         onChange={handleStrokeWidthChange}
-        value={svgProps?.strokeWidth || 0}
+        value={strokeWidth || 0}
         label="Stroke Width"
       />
     </div>

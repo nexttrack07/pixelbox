@@ -39,6 +39,7 @@ export function Moveable({
 }: MoveableProps) {
   const documentRef = useRef<Document>(document);
   const ref = useRef<HTMLDivElement>(null);
+  const brRef = useRef<HTMLSpanElement>(null);
   const [status, setStatus] = useState<Status>("idle");
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
 
@@ -77,16 +78,16 @@ export function Moveable({
     e.stopPropagation();
     if (status === "moving") {
       if (!ref.current) return;
-      const newX = mouse.x - e.clientX;
-      const newY = mouse.y - e.clientY;
+      // const newX = mouse.x - e.clientX;
+      // const newY = mouse.y - e.clientY;
 
-      let x = styles.left - newX;
-      let y = styles.top - newY;
+      // let x = styles.left - newX;
+      // let y = styles.top - newY;
 
-      x = Math.min(Math.max(0, x), 900 - styles.width);
-      y = Math.min(Math.max(0, y), 750 - styles.height);
+      // x = Math.min(Math.max(0, x), 900 - styles.width);
+      // y = Math.min(Math.max(0, y), 750 - styles.height);
 
-      onDrag({ x, y });
+      onDrag({ x: e.movementX, y: e.movementY });
       setMouse({ x: e.clientX, y: e.clientY });
     } else if (status === "rotating") {
       if (!ref.current) return;
@@ -95,47 +96,49 @@ export function Moveable({
     } else if (status === "resizing-br") {
       if (!ref.current) return;
 
-      const width = styles.width - (mouse.x - e.clientX);
-      const height = styles.height - (mouse.y - e.clientY);
+      const width = e.movementX
+      const height = e.movementY
 
       onResize({ width, height });
     } else if (status === "resizing-tl") {
-      const width = styles.width + (mouse.x - e.clientX);
-      const height = styles.height + (mouse.y - e.clientY);
-      const x = styles.left - (mouse.x - e.clientX);
-      const y = styles.top - (mouse.y - e.clientY);
+      const width = -e.movementX
+      const height = -e.movementY
+      const x = e.movementX
+      const y = e.movementY
 
       onDrag({ x, y });
       onResize({ width, height });
     } else if (status === "resizing-bl") {
-      const width = styles.width + (mouse.x - e.clientX);
-      const height = styles.height - (mouse.y - e.clientY);
-      const x = styles.left - (mouse.x - e.clientX);
-      const y = styles.top;
+      const width = -e.movementX
+      const height = e.movementY
+      const y = 0
+      const x = e.movementX
 
       onDrag({ x, y });
       onResize({ width, height });
     } else if (status === "resizing-tr") {
-      const width = styles.width - (mouse.x - e.clientX);
-      const height = styles.height + (mouse.y - e.clientY);
-      const x = styles.left;
-      const y = styles.top - (mouse.y - e.clientY);
+      const width = e.movementX
+      const height = -e.movementY
+      const x = 0
+      const y = e.movementY
+
       onDrag({ x, y });
       onResize({ width, height });
     }
   };
 
-  useEventListener("mouseup", handleMouseUp);
+
+  useEventListener("mouseup", handleMouseUp, documentRef);
   useEventListener("mousemove", handleMouseMove, documentRef, [status, ref]);
 
   return (
     <div
       style={{
         position: "absolute",
-        left: 0,
-        top: 0,
-        bottom: 0,
-        right: 0,
+        left: styles.left,
+        top: styles.top,
+        height: styles.height,
+        width: styles.width,
         userSelect: "none",
       }}
       id="moveable"
@@ -161,10 +164,10 @@ export function Moveable({
             top: "-40px",
             position: "absolute",
             backgroundColor: "#f7f3f2",
+            color: "#000",
             borderRadius: "100%",
-            border: "1px solid black",
             boxShadow: "1px 1px 2px rgba(0,0,0,0.4)",
-            padding: 0.5,
+            padding: 1,
           }}
         >
           <Rotate size={14} />

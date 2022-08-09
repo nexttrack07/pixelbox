@@ -1,12 +1,10 @@
 import { useEffect, useRef } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import {
   elementState,
-  isSelectedState,
   TextElement,
   TextElementBase,
 } from "stores/element.store";
-import { Dimension, Moveable, Position } from "./moveable";
 
 const TEXT_PADDING = 10;
 
@@ -17,10 +15,9 @@ export function TextContainer({
 }: {
   id: number;
   element: TextElement | TextElementBase;
-  onSelect: VoidFunction;
+  onSelect: (e: React.MouseEvent) => void;
 }) {
   const setElement = useSetRecoilState(elementState(id));
-  const isSelected = useRecoilValue(isSelectedState(id));
   const textRef = useRef<HTMLDivElement>(null);
   const textContainerRef = useRef<HTMLDivElement>(null);
 
@@ -44,29 +41,6 @@ export function TextContainer({
     }
   }, [textRef.current]);
 
-  function handleDrag(pos: Position) {
-    setElement((el) => ({
-      ...el,
-      left: pos.x,
-      top: pos.y,
-    }));
-  }
-
-  function handleRotate(rotation: number) {
-    setElement((el) => ({
-      ...el,
-      rotation,
-    }));
-  }
-
-  function handleResize(dimension: Dimension) {
-    console.log("dimensions: ", dimension);
-    setElement((el) => ({
-      ...el,
-      width: dimension.width,
-      height: dimension.height,
-    }));
-  }
 
   return (
     <div
@@ -85,7 +59,7 @@ export function TextContainer({
         top: element.top,
         width: element.width,
         height: element.height,
-        cursor: isSelected ? "move" : "pointer",
+        cursor: "pointer",
       }}
       onMouseDown={onSelect}
       ref={textContainerRef}
@@ -102,20 +76,6 @@ export function TextContainer({
       >
         {element.content}
       </span>
-      {isSelected && element.height && element.width && (
-        <Moveable
-          onDrag={handleDrag}
-          onResize={handleResize}
-          onRotate={handleRotate}
-          styleProps={{
-            top: element.top,
-            left: element.left,
-            height: element.height,
-            width: element.width,
-            rotation: element.rotation,
-          }}
-        />
-      )}
     </div>
   );
 }

@@ -1,26 +1,29 @@
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { elementsState, selectedElementIdsState } from "stores/element.store";
 import { Element } from "components";
-import { Suspense } from "react";
+import React, { Suspense } from "react";
+import { SelectHandler } from "./select-handler";
 
 export function Canvas() {
   const elements = useRecoilValue(elementsState);
-  const setSelectedElement = useSetRecoilState(selectedElementIdsState);
+  const setSelectedElementIds = useSetRecoilState(selectedElementIdsState);
+
+  function handleCanvasClick(e: React.MouseEvent) {
+    console.log("canvas clicked");
+    setSelectedElementIds([]);
+  }
 
   return (
     <div
+      onClick={handleCanvasClick}
       className="relative bg-white h-[800px] w-[1000px]"
-      onClick={(e) => {
-        if (e.currentTarget === e.target) {
-          setSelectedElement([]);
-        }
-      }}
     >
       {elements.map((element) => (
         <Suspense key={element} fallback={<div>Loading...</div>}>
           <Element id={element} />
         </Suspense>
       ))}
+      <SelectHandler />
     </div>
   );
 }

@@ -1,57 +1,25 @@
-import { useSetDefaultDimensions } from "hooks";
-import { useSetRecoilState, useRecoilValue } from "recoil";
-import { Element, elementState, isSelectedState, SvgElement } from "stores/element.store";
+import { useEventListener } from 'hooks';
+import React, { forwardRef } from 'react';
+import { SvgElement } from "stores/element.store";
 import { SvgRenderer } from "./common/svg-renderer";
-import { Dimension, Moveable, Position } from "./moveable";
 
 type Props = {
   id: number;
   element: SvgElement;
-  onSelect: VoidFunction;
+  onSelect: (e: React.MouseEvent) => void;
 };
 
-function isSvgElement(element: Element): element is SvgElement {
-  return element.type === "svg"
-}
-
-export function SvgContainer({ id, element, onSelect }: Props) {
-  const setElement = useSetRecoilState(elementState(id));
-  const isSelected = useRecoilValue(isSelectedState(id));
-  useSetDefaultDimensions(id);
-
-  function handleDrag(pos: Position) {
-    setElement((el) => ({
-      ...el,
-      left: pos.x,
-      top: pos.y,
-    }));
-  }
-
-  function handleRotate(rotation: number) {
-    setElement((el) => ({
-      ...el,
-      rotation,
-    }));
-  }
-
-  function handleResize(dimension: Dimension) {
-    setElement((el) => {
-      if (isSvgElement(el)) {
-        return {
-          ...el,
-          width: dimension.width,
-          height: dimension.height
-        };
-      }
-
-      return el;
-    });
-  }
-
+export const SvgContainer = forwardRef<HTMLDivElement, Props>(({ element, onSelect }, ref) => {
   const { top, left, height, width, rotation } = element;
+
+  function handleMouseDown(e: React.MouseEvent) {
+    e.stopPropagation();
+    onSelect(e);
+  }
 
   return (
     <div
+      ref={ref}
       id="svg-container"
       style={{
         position: "absolute",
@@ -60,25 +28,10 @@ export function SvgContainer({ id, element, onSelect }: Props) {
         top: top,
         width: width,
         height: height,
-        cursor: isSelected ? "move" : "pointer",
       }}
-      onMouseDown={onSelect}
+      onClick={handleMouseDown}
     >
       <SvgRenderer svg={element} />
-      {isSelected && (
-        <Moveable
-          onDrag={handleDrag}
-          onResize={handleResize}
-          onRotate={handleRotate}
-          styleProps={{
-            width: element.width,
-            height: element.height,
-            top: element.top,
-            left: element.left,
-            rotation: element.rotation,
-          }}
-        />
-      )}
     </div>
   );
-}
+})

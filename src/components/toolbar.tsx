@@ -1,3 +1,4 @@
+import React from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { canvasState, elementsState, selectedElementIdsState } from "stores/element.store";
 import {
@@ -29,8 +30,12 @@ export function Toolbar() {
   const setElementsState = useSetRecoilState(elementsState);
   const setCanvas = useSetRecoilState(canvasState);
 
-  function handleDeleteItems() {
-    setElementsState((elements) => elements.filter((el) => !selectedItems.includes(el)));
+  function handleDeleteItems(e: React.MouseEvent) {
+    console.log("Delete Button clicked")
+    e.stopPropagation();
+    setElementsState((elements) => {
+      return elements.filter((el) => !selectedItems.includes(el))
+    });
     setSelectedItems([]);
   }
 
