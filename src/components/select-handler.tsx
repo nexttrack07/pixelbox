@@ -71,7 +71,6 @@ const selectedBoxDimensions = selector<{ width: number; height: number }>({
 
     selectedElementIds.forEach((id) => {
       set(elementState(id), (el) => {
-        console.log('el: ', el, 'newVal: ', newVal)
         return {
           ...el,
           height: (el.height ?? 0) + newVal.height,

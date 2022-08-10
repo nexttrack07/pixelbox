@@ -1,29 +1,7 @@
-import { selector, selectorFamily, useRecoilValue, useSetRecoilState } from "recoil";
-import {
-  Element,
-  selectedElementState,
-  SvgElement,
-} from "stores/element.store";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { selectedElementState, isSvgElement, svgSelector } from "stores/element.store";
 import { ColorResult, BlockPicker } from "react-color";
 import { Slider } from "./slider";
-
-function isSvgElement(element?: Element): element is SvgElement {
-  return element?.type === "svg";
-}
-
-const svgSelector = selectorFamily<any, keyof SvgElement>({
-  key: "svgSelector",
-  get: (prop) => ({ get }) => {
-    const selectedElement = get(selectedElementState);
-
-    if (isSvgElement(selectedElement)) {
-      const val = selectedElement[prop];
-      return val
-    }
-
-    return null;
-  }
-})
 
 export function SelectedSvg() {
   const fill = useRecoilValue(svgSelector("fill"));
@@ -84,10 +62,7 @@ export function SelectedSvg() {
               style={{ backgroundColor: fill }}
             />
             <div tabIndex={0} className="dropdown-content">
-              <BlockPicker
-                onChangeComplete={handleFillChange}
-                color={fill}
-              />
+              <BlockPicker onChangeComplete={handleFillChange} color={fill} />
             </div>
           </div>
         </div>
@@ -100,10 +75,7 @@ export function SelectedSvg() {
               style={{ backgroundColor: stroke }}
             />
             <div tabIndex={0} className="dropdown-content">
-              <BlockPicker
-                onChangeComplete={handleStrokeChange}
-                color={stroke}
-              />
+              <BlockPicker onChangeComplete={handleStrokeChange} color={stroke} />
             </div>
           </div>
         </div>

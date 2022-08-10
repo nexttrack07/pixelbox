@@ -5,7 +5,7 @@ export const elementsState = atom<number[]>({
   default: [],
 });
 
-interface BaseElement {
+export interface BaseElement {
   top: number;
   left: number;
   rotation: number;
@@ -46,21 +46,21 @@ export type SvgBase = {
   stroke?: string;
   fill?: string;
   strokeWidth?: number;
-} & BaseElement;
+}
 
 export type Rect = {
   element: "rect",
   rx?: number;
   width: number;
   height: number;
-} & Omit<SvgBase, "width" | "height">
+}
 
 export type Circle = {
   element: "circle";
   r?: number;
   width: number;
   height: number;
-} & Omit<SvgBase, "width" | "height">
+}
 
 export type Ellipse = {
   element: "ellipse";
@@ -68,11 +68,16 @@ export type Ellipse = {
   ry?: number;
   width: number;
   height: number;
-} & Omit<SvgBase, "width" | "height">
+}
 
-export type SvgType = Rect | Circle | Ellipse;
+export type Path = {
+  element: "path";
+  d?: string;
+}
 
-export type SvgElement = { type: "svg" } & SvgType;
+export type SvgType = Rect | Circle | Ellipse | Path;
+
+export type SvgElement = SvgBase & SvgType;
 
 export interface ImageElement extends BaseElement {
   type: "image";
@@ -80,12 +85,12 @@ export interface ImageElement extends BaseElement {
   mask: "circle" | "squircle" | "hexagon" | "diamond";
 }
 
-export type Element =
+export type Element = BaseElement & (
   | RectangleElement
   | TextElementBase
   | TextElement
   | SvgElement
-  | ImageElement;
+  | ImageElement);
 
 export const defaultStyle = {
   top: 20,
@@ -185,7 +190,7 @@ export const canvasState = selector<Element[]>({
 });
 
 
-export function isSvgElement(element?: Element): element is SvgElement {
+export function isSvgElement(element?: Element): element is SvgElement & BaseElement {
   return element?.type === "svg";
 }
 

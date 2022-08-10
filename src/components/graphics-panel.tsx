@@ -1,18 +1,19 @@
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { elementsState, elementState, SvgType } from "stores/element.store";
+import { elementsState, elementState, SvgElement, BaseElement } from "stores/element.store";
 import { SvgRenderer } from "./common/svg-renderer";
 
 
-const items: SvgType[] = [
+const items: (SvgElement & BaseElement)[] = [
   { type: "svg", element: "rect", fill: "red", width: 100, height: 200, top: 100, left: 200, rotation: 0 },
   { type: "svg", element: "ellipse", fill: "red", width: 100, height: 100, top: 100, left: 200, rotation: 0 },
+  { type: "svg", element: "path", stroke: "red", d: "M100,200 C100,100 400,100 400,200", width: 100, height: 30, top: 100, left: 200, rotation: 0 },
 ]
 
 export function GraphicsPanel() {
   const [elements, setElements] = useRecoilState(elementsState);
   const setElementState = useSetRecoilState(elementState(elements.length));
 
-  function handleAddElement(item: SvgType) {
+  function handleAddElement(item: SvgElement & BaseElement) {
     const newId = elements.length;
     setElements((elements) => [...elements, newId]);
     setElementState({
