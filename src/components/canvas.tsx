@@ -9,7 +9,6 @@ export function Canvas() {
   const setSelectedElementIds = useSetRecoilState(selectedElementIdsState);
 
   function handleCanvasClick(e: React.MouseEvent) {
-    console.log("canvas clicked");
     setSelectedElementIds([]);
   }
 

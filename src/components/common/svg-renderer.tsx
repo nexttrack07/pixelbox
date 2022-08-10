@@ -28,7 +28,6 @@ const svgMap: Record<SvgType["element"], (x: any) => JSX.Element> = {
     width = 200,
     height = 150,
   }: SVGProps<SVGPathElement>) => {
-    console.log("line: ", d, stroke, strokeWidth, width, height)
     return (
       <svg width="100%" height="100%" preserveAspectRatio="none">
         <path d={`M0 0, C ${+width / 4} 0, ${+width / 10} ${+width / 10}, ${width} 0`} strokeWidth={strokeWidth} stroke={stroke} fill="none" />

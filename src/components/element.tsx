@@ -4,7 +4,7 @@ import {
   isSelectedState,
   selectedElementIdsState,
 } from "stores/element.store";
-import { useShiftKeyPressed, useClickOutside } from "hooks";
+import { useShiftKeyPressed } from "hooks";
 import { TextContainer } from "./text-container";
 import { SvgContainer } from "./svg-container";
 import { ImageContainer } from "./image-container";
@@ -27,7 +27,6 @@ export function Element({ id }: ElementProps) {
       if (isSelected) return ids;
 
       if (shiftKeyPressed) {
-        console.log('shift pressed')
         return [...ids, id];
       }
 
