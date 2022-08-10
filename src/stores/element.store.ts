@@ -183,3 +183,22 @@ export const canvasState = selector<Element[]>({
     });
   },
 });
+
+
+export function isSvgElement(element?: Element): element is SvgElement {
+  return element?.type === "svg";
+}
+
+export const svgSelector = selectorFamily<any, keyof SvgElement>({
+  key: "svgSelector",
+  get: (prop) => ({ get }) => {
+    const selectedElement = get(selectedElementState);
+
+    if (isSvgElement(selectedElement)) {
+      const val = selectedElement[prop];
+      return val
+    }
+
+    return null;
+  }
+})
