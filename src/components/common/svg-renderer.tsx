@@ -5,12 +5,15 @@ type Props = {
   svg: SvgType;
 };
 
-const svgMap: Record<SvgType["element"], (x: any) => JSX.Element> = {
-  rect: (props: SVGProps<SVGRectElement>) => (
-    <svg width="100%" height="100%">
-      <rect width="100%" height="100%" {...props} />
-    </svg>
-  ),
+const svgMap: Record<SvgType["element"], (x: SVGProps<any>) => JSX.Element> = {
+  rect: (props: SVGProps<SVGRectElement>) => {
+    console.log("props: ", props);
+    return (
+      <svg width="100%" height="100%">
+        <rect width="100%" height="100%" stroke={props.stroke} fill={props.fill} strokeWidth={props.strokeWidth} />
+      </svg>
+    )
+  },
   circle: (props: SVGProps<SVGCircleElement>) => (
     <svg width="100%" height="100%">
       <circle cx="50%" cy="50%" r="50%" {...props} />

@@ -205,5 +205,18 @@ export const svgSelector = selectorFamily<any, keyof SvgElement>({
     }
 
     return null;
+  },
+  set: (prop) => ({ set }, val) => {
+    if (val instanceof DefaultValue) return;
+    set(selectedElementState, (el) => {
+      if (isSvgElement(el)) {
+        return {
+          ...el,
+          [prop]: val
+        }
+      }
+
+      return el
+    })
   }
 })
