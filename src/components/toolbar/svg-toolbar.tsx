@@ -17,9 +17,9 @@ export const SvgToolbar = () => {
 
   const handleColorChange = (prop: "stroke" | "fill") => (color: ColorResult) => {
     if (prop === "fill") {
-      setFill(color);
+      setFill(color.hex);
     } else {
-      setStroke(color);
+      setStroke(color.hex);
     }
   };
 
