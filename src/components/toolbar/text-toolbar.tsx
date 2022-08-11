@@ -1,9 +1,10 @@
 import { Dropdown } from "components/common/dropdown";
 import { NumberInput } from "components/common/number-input";
+import React from "react";
 import { ColorResult, TwitterPicker } from "react-color";
 import { useRecoilState } from "recoil";
 import { textSelector } from "stores/element.store";
-import { Bold, Italic, Palette, Underline } from "tabler-icons-react";
+import { Bold, CursorText, Italic, Palette, Underline } from "tabler-icons-react";
 
 const fonts = [
   "Roboto",
@@ -17,7 +18,7 @@ const fonts = [
 
 export const TextToolbar = () => {
   const [fontProps, setFontProps] = useRecoilState(textSelector("font"));
-  const [content] = useRecoilState(textSelector("content"));
+  const [content, setContent] = useRecoilState(textSelector("content"));
 
   const handleSelectFont = (family: string) => {
     setFontProps({ ...fontProps, family });
@@ -31,8 +32,22 @@ export const TextToolbar = () => {
     setFontProps({ ...fontProps, color: hex });
   };
 
+  const handleTextChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    setContent(e.target.value)
+  }
+
   return (
     <div className="flex items-center space-x-2">
+      <div className="dropdown">
+        <label tabIndex={0} className="btn btn-outline">
+          <CursorText />
+        </label>
+        <div tabIndex={0} className="dropdown-content bg-slate-800 rounded border mt-1 border-slate-500 card card-compact w-72">
+          <div className="card-body">
+            <input className="input input-bordered input-primary" value={content} onChange={handleTextChange} />
+          </div>
+        </div>
+      </div>
       <div className="w-48">
         <Dropdown
           renderFn={(val) => <span className="text-md">{val}</span>}
