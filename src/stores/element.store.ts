@@ -220,3 +220,35 @@ export const svgSelector = selectorFamily<any, keyof SvgElement>({
     })
   }
 })
+
+export function isTextElement(element?: Element): element is TextElement {
+  return (element as TextElement).type === "text";
+}
+
+export const textSelector = selectorFamily<any, keyof TextElement>({
+  key: "textSelector",
+  get: (prop) => ({ get }) => {
+    const selectedElement = get(selectedElementState);
+
+    if (isTextElement(selectedElement)) {
+      console.log("selectedElement: ", selectedElement)
+      return selectedElement[prop];
+    }
+
+    return null;
+  },
+  set: (prop) => ({ set }, val) => {
+    if (val instanceof DefaultValue) return;
+
+    set(selectedElementState, (el) => {
+      if (isTextElement(el)) {
+        return {
+          ...el,
+          [prop]: val
+        }
+      }
+
+      return el;
+    })
+  }
+})

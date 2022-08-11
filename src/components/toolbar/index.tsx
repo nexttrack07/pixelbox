@@ -3,13 +3,14 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { elementsState, selectedElementIdsState, Element, selectedElementType } from "stores/element.store";
 import { Trash } from "tabler-icons-react";
 import { SvgToolbar } from "./svg-toolbar";
+import { TextToolbar } from "./text-toolbar";
 
 const selectedToolbarMap: Record<Element["type"], JSX.Element> = {
   rectangle: <div>Rectangle selected</div>,
   image: <div>Image selected</div>,
   svg: <SvgToolbar />,
-  text: <div>Text Selected</div>,
-  textBase: <div>Text Selected</div>
+  text: <TextToolbar />,
+  textBase: <TextToolbar />,
 }
 
 export function Toolbar() {
