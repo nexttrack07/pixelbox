@@ -27,7 +27,7 @@ export function Toolbar() {
   }
 
   return (
-    <div className="flex w-full items-center p-4">
+    <div className="flex w-full items-center space-x-4 p-4">
       <div className="flex-1">
         {selectedElement && selectedToolbarMap[selectedElement]}
       </div>

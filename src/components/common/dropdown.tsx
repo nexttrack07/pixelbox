@@ -25,7 +25,7 @@ export function Dropdown<T = string>(props: Props<T>) {
       {({ open }) => (
         <>
           <div className="relative w-full">
-            <Listbox.Button className="btn w-full btn-primary btn-outline">
+            <Listbox.Button className="btn w-full btn-primary btn-outline pr-5">
               <span className="block truncate">{props.renderFn(props.value)}</span>
               <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                 <SelectorIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
