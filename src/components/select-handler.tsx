@@ -1,16 +1,11 @@
 import {
   DefaultValue,
-  RecoilState,
   selector,
   useRecoilState,
-  useRecoilValue,
-  useSetRecoilState,
 } from "recoil";
 import {
   elementState,
   selectedElementIdsState,
-  selectedElementState,
-  Element,
 } from "stores/element.store";
 import { Dimension, Moveable, Position } from "./moveable";
 

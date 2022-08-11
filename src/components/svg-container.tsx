@@ -1,11 +1,11 @@
 import { useEventListener } from 'hooks';
 import React, { forwardRef } from 'react';
-import { SvgElement } from "stores/element.store";
+import { BaseElement, SvgElement } from "stores/element.store";
 import { SvgRenderer } from "./common/svg-renderer";
 
 type Props = {
   id: number;
-  element: SvgElement;
+  element: SvgElement & BaseElement;
   onSelect: (e: React.MouseEvent) => void;
 };
 
