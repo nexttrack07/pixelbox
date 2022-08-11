@@ -110,8 +110,8 @@ export function Moveable({
   };
 
 
-  useEventListener("mouseup", handleMouseUp, documentRef);
-  useEventListener("mousemove", handleMouseMove, documentRef, [status]);
+  useEventListener("pointerup", handleMouseUp, documentRef);
+  useEventListener("pointermove", handleMouseMove, documentRef, [status]);
 
   return (
     <div
