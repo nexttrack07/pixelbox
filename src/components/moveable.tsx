@@ -125,6 +125,7 @@ export function Moveable({
       }}
       id="moveable"
       onMouseDown={handleDragMouseDown}
+      onClick={e => e.stopPropagation()}
     >
       <div
         style={{

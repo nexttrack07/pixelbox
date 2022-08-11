@@ -14,7 +14,7 @@ export function Canvas() {
 
   return (
     <div
-      onClick={handleCanvasClick}
+      onMouseDown={handleCanvasClick}
       className="relative bg-white h-[800px] w-[1000px]"
     >
       {elements.map((element) => (
