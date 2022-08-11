@@ -73,7 +73,6 @@ export const TextContainer = forwardRef<HTMLDivElement, Props>(({
       <span
         ref={textRef}
         onKeyUp={(e) => {
-          console.log(e.currentTarget.textContent);
           setElement((el) => ({
             ...el,
             content: e.currentTarget.textContent || "",

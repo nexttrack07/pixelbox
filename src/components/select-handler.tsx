@@ -62,7 +62,6 @@ const selectedBoxDimensions = selector<{ width: number; height: number }>({
     const selectedElementIds = get(selectedElementIdsState);
 
     if (selectedElementIds.length === 0) return;
-    console.log("newval: ", newVal);
 
     selectedElementIds.forEach((id) => {
       set(elementState(id), (el) => {

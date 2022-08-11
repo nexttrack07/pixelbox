@@ -231,7 +231,6 @@ export const textSelector = selectorFamily<any, keyof TextElement>({
     const selectedElement = get(selectedElementState);
 
     if (isTextElement(selectedElement)) {
-      console.log("selectedElement: ", selectedElement)
       return selectedElement[prop];
     }
 

@@ -7,7 +7,6 @@ type Props = {
 
 const svgMap: Record<SvgType["element"], (x: SVGProps<any>) => JSX.Element> = {
   rect: (props: SVGProps<SVGRectElement>) => {
-    console.log("props: ", props);
     return (
       <svg width="100%" height="100%">
         <rect width="100%" height="100%" stroke={props.stroke} fill={props.fill} strokeWidth={props.strokeWidth} />
