@@ -42,25 +42,25 @@ export interface TextElement extends Omit<TextElementBase, "type"> {
 }
 
 export type SvgBase = {
-  type: "svg",
+  type: "svg";
   stroke?: string;
   fill?: string;
   strokeWidth?: number;
-}
+};
 
 export type Rect = {
-  element: "rect",
+  element: "rect";
   rx?: number;
   width: number;
   height: number;
-}
+};
 
 export type Circle = {
   element: "circle";
   r?: number;
   width: number;
   height: number;
-}
+};
 
 export type Ellipse = {
   element: "ellipse";
@@ -68,12 +68,12 @@ export type Ellipse = {
   ry?: number;
   width: number;
   height: number;
-}
+};
 
 export type Path = {
   element: "path";
   d?: string;
-}
+};
 
 export type SvgType = Rect | Circle | Ellipse | Path;
 
@@ -85,12 +85,8 @@ export interface ImageElement extends BaseElement {
   mask: "circle" | "squircle" | "hexagon" | "diamond";
 }
 
-export type Element = BaseElement & (
-  | RectangleElement
-  | TextElementBase
-  | TextElement
-  | SvgElement
-  | ImageElement);
+export type Element = BaseElement &
+  (RectangleElement | TextElementBase | TextElement | SvgElement | ImageElement);
 
 export const defaultStyle = {
   top: 20,
@@ -115,6 +111,11 @@ export const elementState = atomFamily<Element, number>({
 export const selectedElementIdsState = atom<number[]>({
   key: "selectedElementId",
   default: [],
+  effects: [
+    ({ onSet }) => {
+      onSet((val) => console.log("selected items: ", val));
+    },
+  ],
 });
 
 /**
@@ -157,10 +158,10 @@ export const isSelectedState = selectorFamily({
   key: "isSelected",
   get:
     (id: number) =>
-      ({ get }) => {
-        const selectedElementIds = get(selectedElementIdsState);
-        return selectedElementIds.includes(id);
-      },
+    ({ get }) => {
+      const selectedElementIds = get(selectedElementIdsState);
+      return selectedElementIds.includes(id);
+    },
 });
 
 export const canvasState = selector<Element[]>({
@@ -189,37 +190,40 @@ export const canvasState = selector<Element[]>({
   },
 });
 
-
 export function isSvgElement(element?: Element): element is SvgElement & BaseElement {
   return element?.type === "svg";
 }
 
 export const svgSelector = selectorFamily<any, keyof SvgElement>({
   key: "svgSelector",
-  get: (prop) => ({ get }) => {
-    const selectedElement = get(selectedElementState);
+  get:
+    (prop) =>
+    ({ get }) => {
+      const selectedElement = get(selectedElementState);
 
-    if (isSvgElement(selectedElement)) {
-      const val = selectedElement[prop];
-      return val
-    }
-
-    return null;
-  },
-  set: (prop) => ({ set }, val) => {
-    if (val instanceof DefaultValue) return;
-    set(selectedElementState, (el) => {
-      if (isSvgElement(el)) {
-        return {
-          ...el,
-          [prop]: val
-        }
+      if (isSvgElement(selectedElement)) {
+        const val = selectedElement[prop];
+        return val;
       }
 
-      return el
-    })
-  }
-})
+      return null;
+    },
+  set:
+    (prop) =>
+    ({ set }, val) => {
+      if (val instanceof DefaultValue) return;
+      set(selectedElementState, (el) => {
+        if (isSvgElement(el)) {
+          return {
+            ...el,
+            [prop]: val,
+          };
+        }
+
+        return el;
+      });
+    },
+});
 
 export function isTextElement(element?: Element): element is TextElement {
   return (element as TextElement).type === "text";
@@ -227,27 +231,31 @@ export function isTextElement(element?: Element): element is TextElement {
 
 export const textSelector = selectorFamily<any, keyof TextElement>({
   key: "textSelector",
-  get: (prop) => ({ get }) => {
-    const selectedElement = get(selectedElementState);
+  get:
+    (prop) =>
+    ({ get }) => {
+      const selectedElement = get(selectedElementState);
 
-    if (isTextElement(selectedElement)) {
-      return selectedElement[prop];
-    }
-
-    return null;
-  },
-  set: (prop) => ({ set }, val) => {
-    if (val instanceof DefaultValue) return;
-
-    set(selectedElementState, (el) => {
-      if (isTextElement(el)) {
-        return {
-          ...el,
-          [prop]: val
-        }
+      if (isTextElement(selectedElement)) {
+        return selectedElement[prop];
       }
 
-      return el;
-    })
-  }
-})
+      return null;
+    },
+  set:
+    (prop) =>
+    ({ set }, val) => {
+      if (val instanceof DefaultValue) return;
+
+      set(selectedElementState, (el) => {
+        if (isTextElement(el)) {
+          return {
+            ...el,
+            [prop]: val,
+          };
+        }
+
+        return el;
+      });
+    },
+});
