@@ -1,7 +1,29 @@
+import { selectedBoxDimensions, selectedBoxPosition } from "components/select-handler";
 import React from "react";
-import { DefaultValue, selector, selectorFamily, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { elementState, elementsState, selectedElementIdsState, Element, selectedElementType, BaseElement } from "stores/element.store";
-import { LayoutAlignBottom, LayoutAlignCenter, LayoutAlignLeft, LayoutAlignMiddle, LayoutAlignRight, LayoutAlignTop, LayoutDashboard, Trash } from "tabler-icons-react";
+import {
+  DefaultValue,
+  selector,
+  useRecoilState,
+  useRecoilValue,
+  useSetRecoilState,
+} from "recoil";
+import {
+  elementState,
+  elementsState,
+  selectedElementIdsState,
+  Element,
+  selectedElementType,
+} from "stores/element.store";
+import {
+  LayoutAlignBottom,
+  LayoutAlignCenter,
+  LayoutAlignLeft,
+  LayoutAlignMiddle,
+  LayoutAlignRight,
+  LayoutAlignTop,
+  LayoutDashboard,
+  Trash,
+} from "tabler-icons-react";
 import { SvgToolbar } from "./svg-toolbar";
 import { TextToolbar } from "./text-toolbar";
 
@@ -11,54 +33,45 @@ const selectedToolbarMap: Record<Element["type"], JSX.Element> = {
   svg: <SvgToolbar />,
   text: <TextToolbar />,
   textBase: <TextToolbar />,
-}
+};
 
-const selectedElementsState = selectorFamily<any, keyof BaseElement>({
-  key: "selectedElements",
-  get: prop => ({ get }) => {
-    const selectedElementIds = get(selectedElementIdsState);
-    return selectedElementIds.map(id => get(elementState(id))[prop])
+const selectedBoxMid = selector({
+  key: "selectedElementMid",
+  get: ({ get }) => {
+    const selectedPos = get(selectedBoxPosition);
+    const selectedDims = get(selectedBoxDimensions);
+
+    const { left, top } = selectedPos;
+    const { width, height } = selectedDims;
+    const bottom = top + height;
+    const right = left + width;
+    const hMid = (left + right) / 2;
+    const vMid = (top + bottom) / 2;
+
+    return { left, top, bottom, right, hMid, vMid };
   },
-  set: (prop) => ({ set, get }, val) => {
-    if (val instanceof DefaultValue) return;
+});
+
+const selectedElementsSelector = selector({
+  key: "selectedElementsSelector",
+  get: ({ get }) => {
     const selectedElementIds = get(selectedElementIdsState);
-    const selectedElements = selectedElementIds.map(id => elementState(id));
+    return selectedElementIds.map((id) => get(elementState(id)));
+  },
+  set: ({ get, set }, newElements) => {
+    if (newElements instanceof DefaultValue) return;
 
-    selectedElements.forEach(elAtom => {
-      set(elAtom, el => ({
-        ...el,
-        [prop]: val
-      }))
-    })
-  }
-})
-
-const selectedElementsPosition = selector({
-  key: "selectedElementsPosition",
-  get: () => { },
-  set: ({ set, get }, val) => {
-    if (val instanceof DefaultValue) return;
     const selectedElementIds = get(selectedElementIdsState);
-    if (selectedElementIds.length === 0) return;
-    const selectedElements = selectedElementIds.map(id => get(elementState(id)));
-    const newLeft = selectedElements.reduce((prev, el) => prev + el.left, 0) / selectedElementIds.length;
-
-    selectedElementIds.forEach(id => {
-      set(elementState(id), (el) => ({
-        ...el,
-        left: newLeft
-      }))
-    })
-  }
-})
+    selectedElementIds.forEach((id, i) => set(elementState(id), newElements[i]));
+  },
+});
 
 export function Toolbar() {
   const [selectedItems, setSelectedItems] = useRecoilState(selectedElementIdsState);
   const setElementsState = useSetRecoilState(elementsState);
   const selectedElement = useRecoilValue(selectedElementType);
-  const setSelectedPosition = useSetRecoilState(selectedElementsPosition);
-  const [selectedLeft, setSelectedLeft] = useRecoilState(selectedElementsState("left"));
-  const [selectedTop, setSelectedTop] = useRecoilState(selectedElementsState("top"));
+  const setSelectedElements = useSetRecoilState(selectedElementsSelector);
+  const { left, top, bottom, right, hMid, vMid } = useRecoilValue(selectedBoxMid);
 
   function handleDeleteItems(e: React.MouseEvent) {
     e.stopPropagation();
@@ -73,68 +86,68 @@ export function Toolbar() {
       id: "align-top",
       icon: <LayoutAlignTop />,
       onClick: () => {
-        if (!selectedTop.length) return;
-        console.log('selected top: ', selectedTop)
-        const newTop = Math.min(...selectedTop)
-        console.log("new: ", newTop)
-        setSelectedTop(newTop);
-      }
+        setSelectedElements((elements) =>
+          elements.map((el) => (el.top === top ? el : { ...el, top }))
+        );
+      },
     },
     {
       id: "align-center",
       icon: <LayoutAlignCenter />,
       onClick: () => {
-        if (!selectedTop.length) return;
-        console.log('selected top: ', selectedTop)
-        const newTop = selectedTop.reduce((sum, val) => sum + val, 0) / selectedTop.length;
-        console.log("new: ", newTop)
-        setSelectedTop(newTop);
-      }
+        setSelectedElements((elements) =>
+          elements.map((el) =>
+            el.top + el.height / 2 === vMid ? el : { ...el, top: vMid - el.height / 2 }
+          )
+        );
+      },
     },
     {
       id: "align-bottom",
       icon: <LayoutAlignBottom />,
       onClick: () => {
-        if (!selectedTop.length) return;
-        console.log('selected top: ', selectedTop)
-        const newTop = Math.max(...selectedTop)
-        console.log("new: ", newTop)
-        setSelectedTop(newTop);
-      }
+        setSelectedElements((elements) =>
+          elements.map((el) =>
+            el.top + el.height === bottom ? el : { ...el, top: bottom - el.height }
+          )
+        );
+      },
     },
-  ]
+  ];
 
   const horAlignActions = [
     {
       id: "align-left",
       icon: <LayoutAlignLeft />,
       onClick: () => {
-        if (!selectedLeft.length) return;
-        console.log('selected left: ', selectedLeft)
-        const newLeft = Math.min(...selectedLeft)
-        console.log("new: ", newLeft)
-        setSelectedLeft(newLeft);
-      }
+        setSelectedElements((elements) =>
+          elements.map((el) => (el.left === left ? el : { ...el, left }))
+        );
+      },
     },
     {
       id: "align-middle",
       icon: <LayoutAlignMiddle />,
       onClick: () => {
-        if (!selectedLeft.length) return;
-        const newLeft = selectedLeft.reduce((sum, val) => sum + val, 0) / selectedLeft.length;
-        setSelectedLeft(newLeft);
-      }
+        setSelectedElements((elements) =>
+          elements.map((el) =>
+            el.left + el.width / 2 === hMid ? el : { ...el, left: hMid - el.width / 2 }
+          )
+        );
+      },
     },
     {
       id: "align-right",
       icon: <LayoutAlignRight />,
       onClick: () => {
-        if (!selectedLeft.length) return;
-        const newLeft = Math.max(...selectedLeft)
-        setSelectedLeft(newLeft);
-      }
+        setSelectedElements((elements) =>
+          elements.map((el) =>
+            el.left + el.width === right ? el : { ...el, left: right - el.width }
+          )
+        );
+      },
     },
-  ]
+  ];
 
   return (
     <div className="flex w-full items-center space-x-4 p-4">
@@ -143,23 +156,38 @@ export function Toolbar() {
       </div>
       <div className="space-x-4 flex">
         <div className="dropdown dropdown-end">
-          <button disabled={selectedItems.length < 2} tabIndex={0} className="btn btn-outline">
+          <button
+            disabled={selectedItems.length < 2}
+            tabIndex={0}
+            className="btn btn-outline"
+          >
             <LayoutDashboard />
           </button>
-          <div tabIndex={0} className="dropdown-content card card-compact bg-slate-800 border border-slate-500 rounded mt-1">
+          <div
+            tabIndex={0}
+            className="dropdown-content card card-compact bg-slate-800 border border-slate-500 rounded mt-1"
+          >
             <div className="card-body">
               <label className="label text-base">Vertical Align</label>
               <div className="flex space-x-2">
-                {vertAlignActions.map(action => (
-                  <button key={action.id} onClick={action.onClick} className="btn btn-outline">
+                {vertAlignActions.map((action) => (
+                  <button
+                    key={action.id}
+                    onClick={action.onClick}
+                    className="btn btn-outline"
+                  >
                     {action.icon}
                   </button>
                 ))}
               </div>
               <label className="label text-base">Horizontal Align</label>
               <div className="flex space-x-2">
-                {horAlignActions.map(action => (
-                  <button key={action.id} onClick={action.onClick} className="btn btn-outline">
+                {horAlignActions.map((action) => (
+                  <button
+                    key={action.id}
+                    onClick={action.onClick}
+                    className="btn btn-outline"
+                  >
                     {action.icon}
                   </button>
                 ))}

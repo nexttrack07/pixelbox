@@ -9,7 +9,7 @@ import {
 } from "stores/element.store";
 import { Dimension, Moveable, Position } from "./moveable";
 
-const selectedBoxPosition = selector<{ left: number; top: number }>({
+export const selectedBoxPosition = selector<{ left: number; top: number }>({
   key: "selectedBoxPosition",
   get: ({ get }) => {
     const selectedElementIds = get(selectedElementIdsState);
@@ -37,7 +37,7 @@ const selectedBoxPosition = selector<{ left: number; top: number }>({
   },
 });
 
-const selectedBoxDimensions = selector<{ width: number; height: number }>({
+export const selectedBoxDimensions = selector<{ width: number; height: number }>({
   key: "selectedBoxDimensions",
   get: ({ get }) => {
     const selectedElementIds = get(selectedElementIdsState);
