@@ -1,4 +1,3 @@
-import { selectedBoxDimensions, selectedBoxPosition } from "components/select-handler";
 import React from "react";
 import {
   DefaultValue,
@@ -35,23 +34,6 @@ const selectedToolbarMap: Record<Element["type"], JSX.Element> = {
   textBase: <TextToolbar />,
 };
 
-const selectedBoxMid = selector({
-  key: "selectedElementMid",
-  get: ({ get }) => {
-    const selectedPos = get(selectedBoxPosition);
-    const selectedDims = get(selectedBoxDimensions);
-
-    const { left, top } = selectedPos;
-    const { width, height } = selectedDims;
-    const bottom = top + height;
-    const right = left + width;
-    const hMid = (left + right) / 2;
-    const vMid = (top + bottom) / 2;
-
-    return { left, top, bottom, right, hMid, vMid };
-  },
-});
-
 const selectedElementsSelector = selector({
   key: "selectedElementsSelector",
   get: ({ get }) => {
@@ -71,7 +53,6 @@ export function Toolbar() {
   const setElementsState = useSetRecoilState(elementsState);
   const selectedElement = useRecoilValue(selectedElementType);
   const setSelectedElements = useSetRecoilState(selectedElementsSelector);
-  const { left, top, bottom, right, hMid, vMid } = useRecoilValue(selectedBoxMid);
 
   function handleDeleteItems(e: React.MouseEvent) {
     e.stopPropagation();
@@ -86,31 +67,45 @@ export function Toolbar() {
       id: "align-top",
       icon: <LayoutAlignTop />,
       onClick: () => {
-        setSelectedElements((elements) =>
-          elements.map((el) => (el.top === top ? el : { ...el, top }))
-        );
+        setSelectedElements((elements) => {
+          const top = elements.reduce((prev, el) => Math.min(prev, el.top), Infinity);
+          return elements.map((el) => (el.top === top ? el : { ...el, top }));
+        });
       },
     },
     {
       id: "align-center",
       icon: <LayoutAlignCenter />,
       onClick: () => {
-        setSelectedElements((elements) =>
-          elements.map((el) =>
+        setSelectedElements((elements) => {
+          const top = elements.reduce((prev, el) => Math.min(prev, el.top), Infinity);
+          const height = elements.reduce(
+            (prev, el) => Math.max(prev, el.top + (el.height ?? 0) - top),
+            0
+          );
+          const bottom = top + height;
+          const vMid = (top + bottom) / 2;
+          return elements.map((el) =>
             el.top + el.height / 2 === vMid ? el : { ...el, top: vMid - el.height / 2 }
-          )
-        );
+          );
+        });
       },
     },
     {
       id: "align-bottom",
       icon: <LayoutAlignBottom />,
       onClick: () => {
-        setSelectedElements((elements) =>
-          elements.map((el) =>
+        setSelectedElements((elements) => {
+          const top = elements.reduce((prev, el) => Math.min(prev, el.top), Infinity);
+          const height = elements.reduce(
+            (prev, el) => Math.max(prev, el.top + (el.height ?? 0) - top),
+            0
+          );
+          const bottom = top + height;
+          return elements.map((el) =>
             el.top + el.height === bottom ? el : { ...el, top: bottom - el.height }
-          )
-        );
+          );
+        });
       },
     },
   ];
@@ -120,31 +115,45 @@ export function Toolbar() {
       id: "align-left",
       icon: <LayoutAlignLeft />,
       onClick: () => {
-        setSelectedElements((elements) =>
-          elements.map((el) => (el.left === left ? el : { ...el, left }))
-        );
+        setSelectedElements((elements) => {
+          const left = elements.reduce((prev, el) => Math.min(prev, el.left), Infinity);
+          return elements.map((el) => (el.left === left ? el : { ...el, left }));
+        });
       },
     },
     {
       id: "align-middle",
       icon: <LayoutAlignMiddle />,
       onClick: () => {
-        setSelectedElements((elements) =>
-          elements.map((el) =>
+        setSelectedElements((elements) => {
+          const left = elements.reduce((prev, el) => Math.min(prev, el.left), Infinity);
+          const width = elements.reduce(
+            (prev, el) => Math.max(prev, el.left + (el.width ?? 0) - left),
+            0
+          );
+          const right = left + width;
+          const hMid = (left + right) / 2;
+          return elements.map((el) =>
             el.left + el.width / 2 === hMid ? el : { ...el, left: hMid - el.width / 2 }
-          )
-        );
+          );
+        });
       },
     },
     {
       id: "align-right",
       icon: <LayoutAlignRight />,
       onClick: () => {
-        setSelectedElements((elements) =>
-          elements.map((el) =>
+        setSelectedElements((elements) => {
+          const left = elements.reduce((prev, el) => Math.min(prev, el.left), Infinity);
+          const width = elements.reduce(
+            (prev, el) => Math.max(prev, el.left + (el.width ?? 0) - left),
+            0
+          );
+          const right = left + width;
+          return elements.map((el) =>
             el.left + el.width === right ? el : { ...el, left: right - el.width }
-          )
-        );
+          );
+        });
       },
     },
   ];
