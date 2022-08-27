@@ -7,6 +7,13 @@ const items: (SvgElement & BaseElement)[] = [
   { type: "svg", element: "rect", fill: "red", stroke: "blue", strokeWidth: 2, width: 100, height: 200, top: 100, left: 200, rotation: 0 },
   { type: "svg", element: "ellipse", fill: "red", strokeWidth: 2, width: 100, height: 100, top: 100, left: 200, rotation: 0 },
   { type: "svg", element: "path", stroke: "red", d: "M100,200 C100,100 400,100 400,200", width: 100, height: 30, top: 100, left: 200, rotation: 0 },
+  {
+    type: "svg", element: "curve", fill: "red", width: 100, height: 100, rotation: 0, top: 100, left: 100,
+    points: [
+      { position: { x: 100, y: 100 }, control: { x: 100, y: 200 } },
+      { position: { x: 400, y: 100 }, control: { x: 100, y: 200 } },
+    ]
+  }
 ]
 
 export function GraphicsPanel() {
