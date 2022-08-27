@@ -1,4 +1,3 @@
-import { useEventListener } from 'hooks';
 import React, { forwardRef } from 'react';
 import { BaseElement, SvgElement } from "stores/element.store";
 import { SvgRenderer } from "./common/svg-renderer";
@@ -8,6 +7,7 @@ type Props = {
   element: SvgElement & BaseElement;
   onSelect: (e: React.MouseEvent) => void;
 };
+
 
 export const SvgContainer = forwardRef<HTMLDivElement, Props>(({ element, onSelect }, ref) => {
   const { top, left, height, width, rotation } = element;

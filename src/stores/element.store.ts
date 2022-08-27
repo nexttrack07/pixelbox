@@ -75,6 +75,19 @@ export type Path = {
   d?: string;
 };
 
+export type Point = {
+  position: Coordinate;
+  control: Coordinate;
+}
+
+export type Curve = {
+  type: "curve";
+  element: "curve";
+  top: number;
+  left: number;
+  points: Point[];
+}
+
 export type SvgType = Rect | Circle | Ellipse | Path;
 
 export type SvgElement = SvgBase & SvgType;
@@ -85,8 +98,14 @@ export interface ImageElement extends BaseElement {
   mask: "circle" | "squircle" | "hexagon" | "diamond";
 }
 
-export type Element = BaseElement &
+type Coordinate = { x: number; y: number; }
+
+
+
+export type PositionElement = BaseElement &
   (RectangleElement | TextElementBase | TextElement | SvgElement | ImageElement);
+
+export type Element = PositionElement | Curve;
 
 export const defaultStyle = {
   top: 20,

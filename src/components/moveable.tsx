@@ -6,6 +6,7 @@ import {
   useCallback,
   RefObject,
 } from "react";
+import { Curve } from "stores/element.store";
 import { Rotate } from "tabler-icons-react";
 
 type Status =
@@ -211,3 +212,32 @@ const resizeHandleStyles = {
   width: 15,
   height: 15,
 };
+
+type MoveableLineProps = {
+  onDrag: (p: Position) => void;
+  onRotate: (r: number) => void;
+  onResize: (d: Dimension) => void;
+  curve: Curve;
+}
+
+export function MoveableLine(props: MoveableLineProps) {
+  return (
+    <div style={{
+      position: "absolute",
+      left: props.curve.left,
+      top: props.curve.top,
+    }}>
+      {props.curve.points.map(point => (
+        <div
+          style={{
+            ...resizeHandleStyles,
+            position: "absolute",
+            left: point.position.x,
+            top: point.position.y,
+            transform: "translate(-50%, -50%)"
+          }}
+        />
+      ))}
+    </div>
+  )
+}

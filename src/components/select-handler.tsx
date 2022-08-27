@@ -2,12 +2,14 @@ import {
   DefaultValue,
   selector,
   useRecoilState,
+  useRecoilValue,
 } from "recoil";
 import {
   elementState,
   selectedElementIdsState,
 } from "stores/element.store";
-import { Dimension, Moveable, Position } from "./moveable";
+import { getCurveDimensions } from "./element";
+import { Dimension, Moveable, MoveableLine, Position } from "./moveable";
 
 export const selectedBoxPosition = selector<{ left: number; top: number }>({
   key: "selectedBoxPosition",
@@ -44,11 +46,27 @@ export const selectedBoxDimensions = selector<{ width: number; height: number }>
     const selectedElements = selectedElementIds.map((id) => get(elementState(id)));
     const { left, top } = get(selectedBoxPosition);
     const width = selectedElements.reduce(
-      (prev, el) => Math.max(prev, el.left + (el.width ?? 0) - left),
+      (prev, el) => {
+        let h, w;
+        if (el.type === "curve") {
+          w = getCurveDimensions(el).width;
+        } else {
+          w = el.width;
+        }
+        return Math.max(prev, el.left + (w ?? 0) - left)
+      },
       0
     );
     const height = selectedElements.reduce(
-      (prev, el) => Math.max(prev, el.top + (el.height ?? 0) - top),
+      (prev, el) => {
+        let h;
+        if (el.type === "curve") {
+          h = getCurveDimensions(el).height;
+        } else {
+          h = el.height
+        }
+        return Math.max(prev, el.top + (h ?? 0) - top)
+      },
       0
     );
 
@@ -65,21 +83,48 @@ export const selectedBoxDimensions = selector<{ width: number; height: number }>
 
     selectedElementIds.forEach((id) => {
       set(elementState(id), (el) => {
+        let h, w;
+        if (el.type === "curve") {
+          const { width, height } = getCurveDimensions(el);
+          h = height, w = width;
+        } else {
+          h = el.height, w = el.width;
+        }
         return {
           ...el,
-          height: (el.height ?? 0) + newVal.height,
-          width: (el.width ?? 0) + newVal.width,
+          height: (h ?? 0) + newVal.height,
+          width: (w ?? 0) + newVal.width,
         }
       });
     });
   },
 });
 
+const curveSelector = selector({
+  key: "curve-selector",
+  get: ({ get }) => {
+    const selectedAtoms = get(selectedElementIdsState);
+    if (selectedAtoms.length === 1) {
+      const el = get(elementState(selectedAtoms[0]));
+      return el.type === "curve" ? el : null;
+    }
+
+    return null;
+  }
+})
+
+
 export function SelectHandler() {
   const [selectedPosition, setSelectedPosition] = useRecoilState(selectedBoxPosition);
   const [selectedDimension, setSelectedDimension] = useRecoilState(selectedBoxDimensions);
+  const curve = useRecoilValue(curveSelector);
 
   if (selectedPosition.left === Infinity && selectedDimension.width === 0) return null;
+
+  if (curve) {
+    const f = () => { }
+    return <MoveableLine onDrag={f} onResize={f} onRotate={f} curve={curve} />
+  }
 
   function handleDrag(pos: Position) {
     setSelectedPosition({ left: pos.x, top: pos.y });
