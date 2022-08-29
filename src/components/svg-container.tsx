@@ -10,12 +10,13 @@ type Props = {
 
 
 export const SvgContainer = forwardRef<HTMLDivElement, Props>(({ element, onSelect }, ref) => {
-  const { top, left, height, width, rotation } = element;
 
   function handleMouseDown(e: React.MouseEvent) {
     e.stopPropagation();
     onSelect(e);
   }
+
+  const { top, left, height, width, rotation } = element;
 
   return (
     <div

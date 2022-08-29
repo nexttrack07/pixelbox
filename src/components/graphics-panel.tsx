@@ -1,14 +1,13 @@
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilCallback, useRecoilState, useSetRecoilState } from "recoil";
 import {
   elementsState,
   elementState,
   SvgElement,
   BaseElement,
-  Curve,
 } from "stores/element.store";
 import { SvgRenderer } from "./common/svg-renderer";
 
-type SvgElementType = (SvgElement & BaseElement) | Curve;
+type SvgElementType = SvgElement & BaseElement
 
 const items: SvgElementType[] = [
   {
@@ -44,16 +43,6 @@ const items: SvgElementType[] = [
     top: 100,
     left: 200,
     rotation: 0,
-  },
-  {
-    type: "curve",
-    element: "curve",
-    top: 100,
-    left: 100,
-    points: [
-      { position: { x: 0, y: 0 }, control: { x: 100, y: 200 } },
-      { position: { x: 400, y: 100 }, control: { x: 100, y: 200 } },
-    ],
   },
 ];
 
